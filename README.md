@@ -8,11 +8,9 @@ If you want to install on your system, see the [Installation Guide](./INSTALLATI
 
 ## Usage
 
-The configuration [documentation](./CONFIGURATION.md) contains info about all the environment variables needed to run whatsrook.
+Configuration is managed through environment variables; see the [sample environment file](./.env.example) for the supported settings.
 
 External plugins can be built independently and installed as executable commands. Read the [external plugin setup documentation](./EXTERNAL_PLUGIN.md) to learn how to create, build, install, and use them.
-
-You can run a simple whatsrook instance on this [free host](https://wha-console.onrender.com/), this service not guaranteed to be alive at this moment, you can deploy own [wha-console](https://github.com/ThruqeLabs/wha-console) to run and manage whatsrook instance.
 
 ## Features
 
@@ -29,13 +27,13 @@ You can run a simple whatsrook instance on this [free host](https://wha-console.
 
 ## Contributions
 
-If you want to help make this project better, please take the time to read this contribution [doc](./CONTRIBUTING.md) and [fork](https://github.com/ThruqeLabs/whatsrook/fork) this repository. It provides a well detailed and comprehensive instructions on contributing to this project.
+If you want to help make this project better, please take the time to read this contribution [doc](./CONTRIBUTING.md) and [fork](https://github.com/thruqelabs/whatsapp-go/fork) this repository. Then open a pull request with your changes.
 
 If you are using any AI agent for assistance, please refer to the [AGENTS documentation](./AGENTS.md) Guide.
 
 ## Acknowledgements
 
-whatsrook wouldn't have been possible without these open source, community and passion-driven projects: [whatsmeow](https://github.com/tulir/whatsmeow), [whatsapp-rust](https://github.com/oxidezap/whatsapp-rust), [hypermeow](https://github.com/polymorfa/hypermeow), and [whatsapp-rust-bridge](https://github.com/oxidezap/whatsapp-rust-bridge). I acquired information and knowledge from them.
+whatsrook wouldn't have been possible without these open source, community and passion-driven projects: [whatsmeow](https://github.com/tulir/whatsmeow), [whatsapp-rust](https://github.com/oxidezap/whatsapp-rust), and the broader WhatsApp and Go ecosystem.
 
 ## Licensing
 
