@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	utils "whatsrook"
+	"whatsrook"
 	"whatsrook/cmd/store"
 	"whatsrook/util"
 	"whatsrook/util/external"
@@ -83,7 +83,7 @@ func Dispatch(ctx context.Context, client *whatsmeow.Client, evt *events.Message
 
 	chatStr := evt.Info.Chat.String()
 	senderStr := evt.Info.Sender.String()
-	text := utils.ExtractMessageText(evt)
+	text := whatsrook.ExtractMessageText(evt)
 
 	if strings.HasPrefix(strings.TrimSpace(text), "{") {
 		var respJSON struct {
@@ -107,11 +107,11 @@ func Dispatch(ctx context.Context, client *whatsmeow.Client, evt *events.Message
 
 	displayText := extractInteractionDisplayText(evt)
 	if text != "" {
-		if utils.DispatchListSelection(cctx, text, displayText) {
+		if whatsrook.DispatchListSelection(cctx, text, displayText) {
 			return true
 		}
 	}
-	msgProto := utils.UnwrapMessageProto(evt.Message)
+	msgProto := whatsrook.UnwrapMessageProto(evt.Message)
 	if msgProto == nil {
 		msgProto = evt.Message
 	}
@@ -125,7 +125,7 @@ func Dispatch(ctx context.Context, client *whatsmeow.Client, evt *events.Message
 			"chat", evt.Info.Chat.String(),
 			"sender", evt.Info.Sender.String(),
 		)
-		if utils.DispatchPollVoteEvent(cctx, evt) {
+		if whatsrook.DispatchPollVoteEvent(cctx, evt) {
 			logger.Debug("Dispatcher: poll vote event successfully dispatched to reactive route",
 				"targetPollMsgID", targetID,
 				"chat", evt.Info.Chat.String(),
@@ -159,7 +159,7 @@ func Dispatch(ctx context.Context, client *whatsmeow.Client, evt *events.Message
 	}
 
 	// 2. ViewOnce Auto-Save / Forwarding (autovv)
-	if (evt.IsViewOnce || evt.IsViewOnceV2 || utils.IsViewOnceMessage(evt.Message)) && okStore {
+	if (evt.IsViewOnce || evt.IsViewOnceV2 || whatsrook.IsViewOnceMessage(evt.Message)) && okStore {
 		handleAutoViewOnce(ctx, client, s.SQLStore, evt)
 	}
 
@@ -199,7 +199,7 @@ func Dispatch(ctx context.Context, client *whatsmeow.Client, evt *events.Message
 			return true
 		}
 		if mentionProto, err := s.GetSetting(ctx, "mention_proto"); err == nil && mentionProto != "" {
-			if msg, err := utils.DecodeProtoMessage(mentionProto); err == nil {
+			if msg, err := whatsrook.DecodeProtoMessage(mentionProto); err == nil {
 				setReplyContextInfo(msg, evt)
 				_, _ = client.SendMessage(ctx, evt.Info.Chat, msg)
 				return true
@@ -658,7 +658,7 @@ func extractInteractionDisplayText(evt *events.Message) string {
 	if evt == nil || evt.Message == nil {
 		return ""
 	}
-	msg := utils.UnwrapMessageProto(evt.Message)
+	msg := whatsrook.UnwrapMessageProto(evt.Message)
 	if msg == nil {
 		return ""
 	}
@@ -689,7 +689,7 @@ func handleAutoViewOnce(ctx context.Context, client *whatsmeow.Client, s *sqlsto
 
 	if !targetJID.IsEmpty() {
 		go func() {
-			_ = utils.UnwrapAndSendViewOnceMessage(context.Background(), client, evt.Message, evt.Info.Sender, evt.Info.PushName, targetJID, evt.Info.ID, evt.Info.Chat)
+			_ = whatsrook.UnwrapAndSendViewOnceMessage(context.Background(), client, evt.Message, evt.Info.Sender, evt.Info.PushName, targetJID, evt.Info.ID, evt.Info.Chat)
 		}()
 	}
 }
@@ -713,10 +713,10 @@ func handleStickerCommand(ctx context.Context, client *whatsmeow.Client, s *sqls
 	// Check if the sticker quotes a message providing extra arguments
 	ci := stk.GetContextInfo()
 	if ci == nil {
-		ci = utils.GetContextInfoFromProto(evt.Message)
+		ci = whatsrook.GetContextInfoFromProto(evt.Message)
 	}
 	if ci != nil && ci.QuotedMessage != nil {
-		quotedText := strings.TrimSpace(utils.ExtractTextFromProto(ci.QuotedMessage))
+		quotedText := strings.TrimSpace(whatsrook.ExtractTextFromProto(ci.QuotedMessage))
 		if quotedText != "" {
 			cmdLine = rawCmd + " " + quotedText
 		}
@@ -730,12 +730,12 @@ func handleQuotedStickerCommand(ctx context.Context, client *whatsmeow.Client, s
 		return false
 	}
 
-	ci := utils.GetContextInfoFromProto(evt.Message)
+	ci := whatsrook.GetContextInfoFromProto(evt.Message)
 	if ci == nil || ci.QuotedMessage == nil {
 		return false
 	}
 
-	quotedMsg := utils.UnwrapMessageProto(ci.QuotedMessage)
+	quotedMsg := whatsrook.UnwrapMessageProto(ci.QuotedMessage)
 	if quotedMsg == nil {
 		return false
 	}
@@ -827,7 +827,7 @@ func handleFiltersAndBGM(ctx context.Context, client *whatsmeow.Client, s *sqlst
 
 	bgmRes := <-bgmChan
 	if bgmRes.err == nil && bgmRes.proto != "" {
-		if msg, err := utils.DecodeProtoMessage(bgmRes.proto); err == nil {
+		if msg, err := whatsrook.DecodeProtoMessage(bgmRes.proto); err == nil {
 			setReplyContextInfo(msg, evt)
 			_, _ = client.SendMessage(ctx, evt.Info.Chat, msg)
 			return true
@@ -836,7 +836,7 @@ func handleFiltersAndBGM(ctx context.Context, client *whatsmeow.Client, s *sqlst
 
 	filterRes := <-filterChan
 	if filterRes.err == nil && filterRes.proto != "" {
-		if msg, err := utils.DecodeProtoMessage(filterRes.proto); err == nil {
+		if msg, err := whatsrook.DecodeProtoMessage(filterRes.proto); err == nil {
 			setReplyContextInfo(msg, evt)
 			_, _ = client.SendMessage(ctx, evt.Info.Chat, msg)
 			return true

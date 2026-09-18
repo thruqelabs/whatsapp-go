@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	utils "whatsrook"
+	"whatsrook"
 	"whatsrook/cmd/dispatch"
 	"whatsrook/cmd/tools"
 	"whatsrook/util/logger"
@@ -126,7 +126,7 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 					if err != nil {
 						continue
 					}
-					if utils.IsSameUserRaw(ctx, client, uJID, c.Sender) {
+					if whatsrook.IsSameUserRaw(ctx, client, uJID, c.Sender) {
 						logger.Debug("antimsg: deleting message from targeted participant", "chat", chatStr, "sender", c.Sender.String())
 						_, _ = client.SendMessage(ctx, c.Chat, client.BuildRevoke(c.Chat, c.Sender, evt.Info.ID))
 						return true
@@ -140,7 +140,7 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 	rawAntiSpamStatus, _ := s.GetSetting(ctx, "antispam_status:"+chatStr)
 	if rawAntiSpamStatus == "on" {
 		info, err := client.GetGroupInfo(ctx, c.Chat)
-		if err == nil && !utils.IsAdminRaw(ctx, client, info, sender) && !c.IsSudo() {
+		if err == nil && !whatsrook.IsAdminRaw(ctx, client, info, sender) && !c.IsSudo() {
 			rawMax, _ := s.GetSetting(ctx, "antispam_max:"+chatStr)
 			maxMsgs, _ := strconv.Atoi(rawMax)
 			if maxMsgs <= 0 {
@@ -151,20 +151,20 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 				if action == "" {
 					action = "delete"
 				}
-				botIsAdmin := utils.IsBotAdminRaw(ctx, client, info)
+				botIsAdmin := whatsrook.IsBotAdminRaw(ctx, client, info)
 				if botIsAdmin {
 					_, _ = client.SendMessage(ctx, c.Chat, client.BuildRevoke(c.Chat, c.Sender, evt.Info.ID))
 					if action == "kick" {
 						_, _ = client.UpdateGroupParticipants(ctx, c.Chat, []types.JID{c.Sender}, whatsmeow.ParticipantChangeRemove)
 					}
-					resolvedJID, username := utils.ResolveMentionRaw(ctx, client, c.Sender)
+					resolvedJID, username := whatsrook.ResolveMentionRaw(ctx, client, c.Sender)
 					var textMsg string
 					if action == "kick" {
 						textMsg = dispatch.Sprintf("@%s was removed for sending messages too quickly (AntiSpam limit exceeded).", username)
 					} else {
 						textMsg = dispatch.Sprintf("Slow down, @%s! Your message was removed because you're sending messages too fast (AntiSpam limit).", username)
 					}
-					formatted := utils.FormatTextResponseRaw(textMsg)
+					formatted := whatsrook.FormatTextResponseRaw(textMsg)
 					_, _ = client.SendMessage(ctx, c.Chat, &waE2E.Message{
 						ExtendedTextMessage: &waE2E.ExtendedTextMessage{
 							Text: &formatted,
@@ -201,7 +201,7 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 		return false
 	}
 
-	if utils.IsAdminRaw(ctx, client, info, sender) || c.IsSudo() {
+	if whatsrook.IsAdminRaw(ctx, client, info, sender) || c.IsSudo() {
 		return false
 	}
 
@@ -249,10 +249,10 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 	}
 
 	if violation {
-		botIsAdmin := utils.IsBotAdminRaw(ctx, client, info)
+		botIsAdmin := whatsrook.IsBotAdminRaw(ctx, client, info)
 		if botIsAdmin {
 			_, _ = client.SendMessage(ctx, c.Chat, client.BuildRevoke(c.Chat, c.Sender, evt.Info.ID))
-			resolvedJID, username := utils.ResolveMentionRaw(ctx, client, c.Sender)
+			resolvedJID, username := whatsrook.ResolveMentionRaw(ctx, client, c.Sender)
 
 			actionKey := violationType + "_action:" + chatStr
 			action, _ := s.GetSetting(ctx, actionKey)
@@ -262,7 +262,7 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 			case "kick":
 				_, _ = client.UpdateGroupParticipants(ctx, c.Chat, []types.JID{c.Sender}, whatsmeow.ParticipantChangeRemove)
 				textMsg := dispatch.Sprintf("@%s was removed from the group for sending prohibited content: %s.", username, reason)
-				formatted := utils.FormatTextResponseRaw(textMsg)
+				formatted := whatsrook.FormatTextResponseRaw(textMsg)
 				_, _ = client.SendMessage(ctx, c.Chat, &waE2E.Message{
 					ExtendedTextMessage: &waE2E.ExtendedTextMessage{
 						Text: &formatted,
@@ -292,7 +292,7 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 					_, _ = client.UpdateGroupParticipants(ctx, c.Chat, []types.JID{c.Sender}, whatsmeow.ParticipantChangeRemove)
 					_ = s.PutSetting(ctx, warnsKey, "0")
 					textMsg := dispatch.Sprintf("@%s has accumulated %d of %d warnings (%s) and has been removed from the group.", username, currWarns, maxWarn, reason)
-					formatted := utils.FormatTextResponseRaw(textMsg)
+					formatted := whatsrook.FormatTextResponseRaw(textMsg)
 					_, _ = client.SendMessage(ctx, c.Chat, &waE2E.Message{
 						ExtendedTextMessage: &waE2E.ExtendedTextMessage{
 							Text: &formatted,
@@ -304,7 +304,7 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 				} else {
 					_ = s.PutSetting(ctx, warnsKey, strconv.Itoa(currWarns))
 					textMsg := dispatch.Sprintf("Warning for @%s (%d/%d): Your message was deleted because it contains %s. Reaching %d warnings will result in removal from the group.", username, currWarns, maxWarn, reason, maxWarn)
-					formatted := utils.FormatTextResponseRaw(textMsg)
+					formatted := whatsrook.FormatTextResponseRaw(textMsg)
 					_, _ = client.SendMessage(ctx, c.Chat, &waE2E.Message{
 						ExtendedTextMessage: &waE2E.ExtendedTextMessage{
 							Text: &formatted,
@@ -317,7 +317,7 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 
 			default:
 				textMsg := dispatch.Sprintf("Message from @%s was deleted because it contains %s.", username, reason)
-				formatted := utils.FormatTextResponseRaw(textMsg)
+				formatted := whatsrook.FormatTextResponseRaw(textMsg)
 				_, _ = client.SendMessage(ctx, c.Chat, &waE2E.Message{
 					ExtendedTextMessage: &waE2E.ExtendedTextMessage{
 						Text: &formatted,

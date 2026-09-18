@@ -19,7 +19,7 @@ import (
 	"go.mau.fi/whatsmeow/types"
 	"go.mau.fi/whatsmeow/types/events"
 
-	utils "whatsrook"
+	"whatsrook"
 	"whatsrook/cmd/dispatch"
 	"whatsrook/util/logger"
 	"whatsrook/util/media"
@@ -179,7 +179,7 @@ func handleBlocklist(ctx *dispatch.Context) error {
 }
 
 func handleSetBotPP(ctx *dispatch.Context) error {
-	downloadable, _, _ := utils.ExtractMediaFromEvent(ctx.Evt)
+	downloadable, _, _ := whatsrook.ExtractMediaFromEvent(ctx.Evt)
 	if downloadable == nil {
 		return ctx.Replyf("Please upload or reply to an image to set as profile picture. Usage: %spp", ctx.GetPrefix())
 	}
@@ -655,9 +655,9 @@ func resolveUserTokens(ctx context.Context, client *whatsmeow.Client, chat, targ
 		}
 		// Fallback: check recent message store for SenderAlt
 		if pnJID.IsEmpty() {
-			if recent := utils.GetRecentMessageForJID(nonAD); recent != nil && !recent.Info.SenderAlt.IsEmpty() && recent.Info.SenderAlt.Server == types.DefaultUserServer {
+			if recent := whatsrook.GetRecentMessageForJID(nonAD); recent != nil && !recent.Info.SenderAlt.IsEmpty() && recent.Info.SenderAlt.Server == types.DefaultUserServer {
 				pnJID = recent.Info.SenderAlt.ToNonAD()
-			} else if recent := utils.GetRecentMessageForJID(chat); recent != nil && !recent.Info.SenderAlt.IsEmpty() && recent.Info.SenderAlt.Server == types.DefaultUserServer {
+			} else if recent := whatsrook.GetRecentMessageForJID(chat); recent != nil && !recent.Info.SenderAlt.IsEmpty() && recent.Info.SenderAlt.Server == types.DefaultUserServer {
 				pnJID = recent.Info.SenderAlt.ToNonAD()
 			}
 		}
@@ -695,9 +695,9 @@ func resolveUserTokens(ctx context.Context, client *whatsmeow.Client, chat, targ
 		}
 		// Fallback: check recent message store
 		if lidJID.IsEmpty() {
-			if recent := utils.GetRecentMessageForJID(nonAD); recent != nil && recent.Info.Sender.Server == types.HiddenUserServer {
+			if recent := whatsrook.GetRecentMessageForJID(nonAD); recent != nil && recent.Info.Sender.Server == types.HiddenUserServer {
 				lidJID = recent.Info.Sender.ToNonAD()
-			} else if recent := utils.GetRecentMessageForJID(chat); recent != nil && recent.Info.Sender.Server == types.HiddenUserServer {
+			} else if recent := whatsrook.GetRecentMessageForJID(chat); recent != nil && recent.Info.Sender.Server == types.HiddenUserServer {
 				lidJID = recent.Info.Sender.ToNonAD()
 			}
 		}
@@ -762,12 +762,12 @@ func resolveUserTokens(ctx context.Context, client *whatsmeow.Client, chat, targ
 	}
 
 	// Fallback: check recent message push name ONLY if it's a valid single-word username
-	if recent := utils.GetRecentMessageForJID(nonAD); recent != nil && recent.Info.PushName != "" {
+	if recent := whatsrook.GetRecentMessageForJID(nonAD); recent != nil && recent.Info.PushName != "" {
 		p := strings.TrimSpace(strings.ToLower(recent.Info.PushName))
 		if isValidUsername(p) {
 			add(p)
 		}
-	} else if recent := utils.GetRecentMessageForJID(chat); recent != nil && recent.Info.PushName != "" {
+	} else if recent := whatsrook.GetRecentMessageForJID(chat); recent != nil && recent.Info.PushName != "" {
 		p := strings.TrimSpace(strings.ToLower(recent.Info.PushName))
 		if isValidUsername(p) {
 			add(p)
@@ -830,7 +830,7 @@ func removeUserTokens(ctx context.Context, client *whatsmeow.Client, chat types.
 			// Also try parsing the stored token as a JID and using IsSameUserRaw.
 			if strings.Contains(entry, "@") {
 				if stored, err := types.ParseJID(entry); err == nil && stored.User != "" {
-					if utils.IsSameUserRaw(ctx, client, targets[i], stored) {
+					if whatsrook.IsSameUserRaw(ctx, client, targets[i], stored) {
 						entryMatched = true
 						if !matched[i] {
 							matched[i] = true
@@ -1111,7 +1111,7 @@ func handleBan(ctx *dispatch.Context) error {
 		if ctx.IsTargetOwner(target) {
 			continue
 		}
-		if utils.IsSudoRaw(ctx.Ctx, ctx.Client, target) {
+		if whatsrook.IsSudoRaw(ctx.Ctx, ctx.Client, target) {
 			continue
 		}
 

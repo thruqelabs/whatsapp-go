@@ -21,7 +21,7 @@ import (
 	"time"
 	"whatsrook/util/logger"
 
-	utils "whatsrook"
+	"whatsrook"
 
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/types/events"
@@ -80,7 +80,7 @@ func (d *Dispatcher) PluginDir() (string, error) {
 	if env := os.Getenv(DefaultPluginDirEnv); env != "" {
 		return filepath.Clean(env), nil
 	}
-	baseDir := utils.DefaultDataDir()
+	baseDir := whatsrook.DefaultDataDir()
 	return filepath.Join(baseDir, "plugins"), nil
 }
 
@@ -194,14 +194,14 @@ func (d *Dispatcher) Dispatch(ctx context.Context, client *whatsmeow.Client, evt
 	if isCancelRequest {
 		if d.CancelSession(chatKey, name) {
 			go func() {
-				_ = (&utils.PluginContext{
+				_ = (&whatsrook.PluginContext{
 					Ctx: context.Background(), Client: client, Evt: evt,
 					Chat: evt.Info.Chat, Sender: evt.Info.Sender,
 				}).Replyf("🛑 Live %s tracking stopped.", name)
 			}()
 		} else {
 			go func() {
-				_ = (&utils.PluginContext{
+				_ = (&whatsrook.PluginContext{
 					Ctx: context.Background(), Client: client, Evt: evt,
 					Chat: evt.Info.Chat, Sender: evt.Info.Sender,
 				}).Replyf("No active %s session running in this chat.", name)
@@ -215,7 +215,7 @@ func (d *Dispatcher) Dispatch(ctx context.Context, client *whatsmeow.Client, evt
 
 	// Launch execution in a non-blocking background goroutine
 	go func() {
-		plugCtx := &utils.PluginContext{
+		plugCtx := &whatsrook.PluginContext{
 			Ctx:     ctx,
 			Client:  client,
 			Evt:     evt,
@@ -228,13 +228,13 @@ func (d *Dispatcher) Dispatch(ctx context.Context, client *whatsmeow.Client, evt
 
 		prefix := plugCtx.GetPrefix()
 		botName := plugCtx.GetBotName()
-		isSudo := utils.IsSudoRaw(ctx, client, evt.Info.Sender)
+		isSudo := whatsrook.IsSudoRaw(ctx, client, evt.Info.Sender)
 		isOwner := plugCtx.IsOwner()
 
 		// Extract quoted message context if present
 		var quotedPayload *QuotedMessagePayload
 		if qm := plugCtx.GetQuotedMessage(); qm != nil {
-			quotedText := utils.ExtractTextFromProto(qm)
+			quotedText := whatsrook.ExtractTextFromProto(qm)
 			senderJID, _ := plugCtx.GetQuotedSender()
 			var stanzaID string
 			if ci := plugCtx.GetContextInfo(); ci != nil {
@@ -475,7 +475,7 @@ func (d *Dispatcher) InstallAll(ctx context.Context) ([]string, []string) {
 	var failed []string
 	for res := range resChan {
 		if res.err != nil {
-			failed = append(failed, utils.Sprintf("%s (%v)", res.name, res.err))
+			failed = append(failed, whatsrook.Sprintf("%s (%v)", res.name, res.err))
 		} else {
 			installed = append(installed, res.name)
 		}

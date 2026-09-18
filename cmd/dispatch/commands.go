@@ -11,13 +11,13 @@ import (
 	"math"
 	"strings"
 	"sync"
-	utils "whatsrook"
+	"whatsrook"
 	"whatsrook/util/builder"
 	"whatsrook/util/external"
 )
 
 // Context aliases the core whatsrook.PluginContext execution context.
-type Context = utils.PluginContext
+type Context = whatsrook.PluginContext
 
 // TextBuilder aliases the fluent text composition builder.
 type TextBuilder = builder.TextBuilder
@@ -30,34 +30,34 @@ type PollRequest = builder.PollRequest
 
 // NewText constructs a fluent text message builder.
 func NewText(initial ...string) *TextBuilder {
-	return utils.NewText(initial...)
+	return whatsrook.NewText(initial...)
 }
 
 var (
 	// Sprintf is an alias for standard string formatting.
-	Sprintf = utils.Sprintf
+	Sprintf = whatsrook.Sprintf
 	// Bold formats plain text as bold.
-	Bold = utils.Bold
+	Bold = whatsrook.Bold
 	// Boldf formats formatted text as bold.
-	Boldf = utils.Boldf
+	Boldf = whatsrook.Boldf
 	// Italic formats plain text as italic.
-	Italic = utils.Italic
+	Italic = whatsrook.Italic
 	// Italicf formats formatted text as italic.
-	Italicf = utils.Italicf
+	Italicf = whatsrook.Italicf
 	// Code formats plain text as inline code.
-	Code = utils.Code
+	Code = whatsrook.Code
 	// Codef formats formatted text as inline code.
-	Codef = utils.Codef
+	Codef = whatsrook.Codef
 	// CodeBlock formats plain text as a code block.
-	CodeBlock = utils.CodeBlock
+	CodeBlock = whatsrook.CodeBlock
 	// Strike formats plain text with strikethrough.
-	Strike = utils.Strike
+	Strike = whatsrook.Strike
 	// Strikef formats formatted text with strikethrough.
-	Strikef = utils.Strikef
+	Strikef = whatsrook.Strikef
 	// Quote formats plain text as a blockquote.
-	Quote = utils.Quote
+	Quote = whatsrook.Quote
 	// Quotef formats formatted text as a blockquote.
-	Quotef = utils.Quotef
+	Quotef = whatsrook.Quotef
 )
 
 // Handler represents the function signature executed when a command is triggered.

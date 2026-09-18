@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	utils "whatsrook"
+	"whatsrook"
 	"whatsrook/cmd/dispatch"
 	"whatsrook/util/logger"
 
@@ -600,8 +600,8 @@ func extractContextFromQuotedMessage(ctx *dispatch.Context, data *Data) {
 			data.UserOfQuotedMessage = quotedPushName
 			if data.ChatType == "group" {
 				for _, p := range data.GroupMetaData.Participants {
-					matches := (!quotedJID.IsEmpty() && utils.ParticipantMatchesUser(ctx.Ctx, ctx.Client, p, quotedJID)) ||
-						(!quotedPNJID.IsEmpty() && utils.ParticipantMatchesUser(ctx.Ctx, ctx.Client, p, quotedPNJID))
+					matches := (!quotedJID.IsEmpty() && whatsrook.ParticipantMatchesUser(ctx.Ctx, ctx.Client, p, quotedJID)) ||
+						(!quotedPNJID.IsEmpty() && whatsrook.ParticipantMatchesUser(ctx.Ctx, ctx.Client, p, quotedPNJID))
 					if matches {
 						switch {
 						case p.IsSuperAdmin:
@@ -726,7 +726,7 @@ func extractContextFromQuotedMessage(ctx *dispatch.Context, data *Data) {
 		data.QuotedMessageOfQuestion = dispatch.Sprintf("Contact: %s", contMsg.GetDisplayName())
 
 	default:
-		if txt := utils.ExtractTextFromProto(quotedMsg); txt != "" {
+		if txt := whatsrook.ExtractTextFromProto(quotedMsg); txt != "" {
 			data.QuotedMessageType = "Other"
 			data.QuotedMessageOfQuestion = txt
 		}

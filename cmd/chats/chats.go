@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	utils "whatsrook"
+	"whatsrook"
 	"whatsrook/cmd/dispatch"
 	"whatsrook/util/logger"
 
@@ -130,7 +130,7 @@ func handlePin(ctx *dispatch.Context) error {
 		quotedSender, ok := ctx.GetQuotedSender()
 		quotedFromMe := false
 		if ok && ctx.Client.Store.ID != nil {
-			quotedFromMe = utils.IsSameUserRaw(ctx.Ctx, ctx.Client, quotedSender, *ctx.Client.Store.ID)
+			quotedFromMe = whatsrook.IsSameUserRaw(ctx.Ctx, ctx.Client, quotedSender, *ctx.Client.Store.ID)
 		}
 
 		var participantStr *string
@@ -191,7 +191,7 @@ func handleUnpin(ctx *dispatch.Context) error {
 		quotedSender, ok := ctx.GetQuotedSender()
 		quotedFromMe := false
 		if ok && ctx.Client.Store.ID != nil {
-			quotedFromMe = utils.IsSameUserRaw(ctx.Ctx, ctx.Client, quotedSender, *ctx.Client.Store.ID)
+			quotedFromMe = whatsrook.IsSameUserRaw(ctx.Ctx, ctx.Client, quotedSender, *ctx.Client.Store.ID)
 		}
 
 		var participantStr *string
@@ -241,7 +241,7 @@ func handleBlock(ctx *dispatch.Context) error {
 		return ctx.Reply("Groups cannot be blocked. The block command only applies to individual contacts.")
 	}
 
-	if utils.IsSudoRaw(ctx.Ctx, ctx.Client, target) {
+	if whatsrook.IsSudoRaw(ctx.Ctx, ctx.Client, target) {
 		return ctx.Reply("You cannot block the bot owner or authorized sudo users.")
 	}
 
@@ -373,7 +373,7 @@ func handleDelete(ctx *dispatch.Context) error {
 }
 
 func isJIDSudo(ctx *dispatch.Context, jid types.JID) bool {
-	return utils.IsSudoRaw(ctx.Ctx, ctx.Client, jid)
+	return whatsrook.IsSudoRaw(ctx.Ctx, ctx.Client, jid)
 }
 
 func handleReport(ctx *dispatch.Context) error {
@@ -522,7 +522,7 @@ func handleVV(ctx *dispatch.Context) error {
 		return sendVVMenu(ctx, s)
 	}
 
-	if !utils.IsViewOnceMessage(quoted) {
+	if !whatsrook.IsViewOnceMessage(quoted) {
 		if quoted.GetImageMessage() == nil && quoted.GetVideoMessage() == nil && quoted.GetAudioMessage() == nil && quoted.GetDocumentWithCaptionMessage() == nil {
 			return ctx.Reply("The selected message is not a ViewOnce or media message.")
 		}
@@ -571,7 +571,7 @@ func handleVV(ctx *dispatch.Context) error {
 	} else if ctx.Evt != nil {
 		quoteID = ctx.Evt.Info.ID
 	}
-	err := utils.UnwrapAndSendViewOnceMessage(ctx.Ctx, ctx.Client, quoted, senderJID, pushName, targetJID, quoteID, ctx.Chat)
+	err := whatsrook.UnwrapAndSendViewOnceMessage(ctx.Ctx, ctx.Client, quoted, senderJID, pushName, targetJID, quoteID, ctx.Chat)
 	if err != nil {
 		return ctx.Reply("Could not unwrap ViewOnce message: " + err.Error())
 	}

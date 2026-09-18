@@ -6,7 +6,7 @@ import (
 
 	"go.mau.fi/whatsmeow/types"
 
-	utils "whatsrook"
+	"whatsrook"
 )
 
 const metaAiSystemPrompt = `[SYSTEM CONTEXT:
@@ -52,11 +52,11 @@ func BuildRunCommandInstructionWithNameAndPrefix(cmds []CommandInfo, botName, pr
 	promptTmpl = strings.ReplaceAll(promptTmpl, "WhatsRook", botName)
 	promptTmpl = strings.ReplaceAll(promptTmpl, "{PREFIX}", prefix)
 
-	cmdsTb := utils.NewText()
+	cmdsTb := whatsrook.NewText()
 	for _, c := range cmds {
 		aliasStr := ""
 		if c.Alias != "" {
-			aliasStr = utils.Sprintf(" (alias: %s%s)", prefix, c.Alias)
+			aliasStr = whatsrook.Sprintf(" (alias: %s%s)", prefix, c.Alias)
 		}
 		sudoStr := ""
 		if !c.IsPublic {
@@ -117,7 +117,7 @@ func RenderGroupContext(info types.GroupInfo) string {
 		return ""
 	}
 
-	tb := utils.NewText().
+	tb := whatsrook.NewText().
 		Line("[GROUP CONTEXT]")
 
 	if name != "" {
@@ -145,7 +145,7 @@ func RenderUserContext(d Data) string {
 		displayName = "User"
 	}
 
-	tb := utils.NewText().
+	tb := whatsrook.NewText().
 		Line("[USER CONTEXT]").
 		Linef("User: %s", displayName)
 
@@ -166,7 +166,7 @@ func RenderQuotedContext(d Data) string {
 		return ""
 	}
 
-	tb := utils.NewText().
+	tb := whatsrook.NewText().
 		Line("[REPLYING TO A MESSAGE — EXTRACTED CONTEXT]")
 
 	if d.UserOfQuotedMessage != "" {
@@ -200,7 +200,7 @@ func RenderCurrentMessage(d Data) string {
 		displayName = "User"
 	}
 
-	tb := utils.NewText().
+	tb := whatsrook.NewText().
 		Line("[CURRENT MESSAGE]")
 
 	tb.Linef("From: %s", displayName)

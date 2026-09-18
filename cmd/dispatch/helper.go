@@ -12,7 +12,7 @@ import (
 	"go.mau.fi/whatsmeow/types"
 	"go.mau.fi/whatsmeow/types/events"
 
-	utils "whatsrook"
+	"whatsrook"
 	"whatsrook/cmd/store"
 )
 
@@ -116,23 +116,23 @@ func GetStore(ctx *Context) (*StoreWrapper, bool) {
 
 // RecordRecentMessage caches an incoming message event.
 func RecordRecentMessage(evt *events.Message) {
-	utils.RecordRecentMessage(evt)
+	whatsrook.RecordRecentMessage(evt)
 }
 
 func init() {
-	utils.GlobalSettingGetter = func(ctx context.Context, client *whatsmeow.Client, key string) (string, error) {
+	whatsrook.GlobalSettingGetter = func(ctx context.Context, client *whatsmeow.Client, key string) (string, error) {
 		if s, ok := GetSQLStore(client); ok {
 			return s.GetSetting(ctx, key)
 		}
 		return "", nil
 	}
-	utils.GlobalSettingSetter = func(ctx context.Context, client *whatsmeow.Client, key, value string) error {
+	whatsrook.GlobalSettingSetter = func(ctx context.Context, client *whatsmeow.Client, key, value string) error {
 		if s, ok := GetSQLStore(client); ok {
 			return s.PutSetting(ctx, key, value)
 		}
 		return nil
 	}
-	utils.GlobalSettingDeleter = func(ctx context.Context, client *whatsmeow.Client, key string) error {
+	whatsrook.GlobalSettingDeleter = func(ctx context.Context, client *whatsmeow.Client, key string) error {
 		if s, ok := GetSQLStore(client); ok {
 			return s.DeleteSetting(ctx, key)
 		}

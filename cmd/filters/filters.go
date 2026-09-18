@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	utils "whatsrook"
+	"whatsrook"
 	"whatsrook/cmd/dispatch"
 	"whatsrook/cmd/games"
 	"whatsrook/cmd/store"
@@ -125,7 +125,7 @@ func RenderFilterTemplate(ctx context.Context, client *whatsmeow.Client, evt *ev
 		senderJIDStr = senderJID.String()
 
 		if client != nil {
-			rJID, username := utils.ResolveMentionRaw(ctx, client, senderJID)
+			rJID, username := whatsrook.ResolveMentionRaw(ctx, client, senderJID)
 			resolvedJID = rJID
 			if pushName == "User" && username != "" {
 				pushName = username
@@ -499,7 +499,7 @@ func handleFilter(ctx *dispatch.Context) error {
 			}
 		}
 
-		encoded, err := utils.EncodeProtoMessage(responseProtoMsg)
+		encoded, err := whatsrook.EncodeProtoMessage(responseProtoMsg)
 		if err != nil {
 			return ctx.Replyf("Failed to encode filter message: %v", err)
 		}
@@ -550,7 +550,7 @@ func handleFilter(ctx *dispatch.Context) error {
 			}
 		}
 
-		encoded, err := utils.EncodeProtoMessage(responseProtoMsg)
+		encoded, err := whatsrook.EncodeProtoMessage(responseProtoMsg)
 		if err != nil {
 			return ctx.Replyf("Failed to encode filter message: %v", err)
 		}
@@ -646,7 +646,7 @@ func handleBGM(ctx *dispatch.Context) error {
 	}
 
 	if responseProtoMsg != nil {
-		encoded, err := utils.EncodeProtoMessage(responseProtoMsg)
+		encoded, err := whatsrook.EncodeProtoMessage(responseProtoMsg)
 		if err != nil {
 			return ctx.Replyf("Failed to encode BGM message: %v", err)
 		}
@@ -691,7 +691,7 @@ func handleMention(ctx *dispatch.Context) error {
 			}
 		}
 
-		encoded, err := utils.EncodeProtoMessage(quoted)
+		encoded, err := whatsrook.EncodeProtoMessage(quoted)
 		if err != nil {
 			return ctx.Replyf("Failed to encode mention message: %v", err)
 		}
@@ -715,7 +715,7 @@ func handleMention(ctx *dispatch.Context) error {
 		if err != nil || mentionProto == "" {
 			return ctx.Reply("No tag auto-response configured.")
 		}
-		if msg, err := utils.DecodeProtoMessage(mentionProto); err == nil {
+		if msg, err := whatsrook.DecodeProtoMessage(mentionProto); err == nil {
 			ApplyFilterPlaceholders(ctx.Ctx, ctx.Client, ctx.Evt, msg)
 			_, _ = ctx.Client.SendMessage(ctx.Ctx, ctx.Chat, msg)
 			return nil
@@ -728,7 +728,7 @@ func handleMention(ctx *dispatch.Context) error {
 			Conversation: &textVal,
 		}
 
-		encoded, err := utils.EncodeProtoMessage(quoted)
+		encoded, err := whatsrook.EncodeProtoMessage(quoted)
 		if err != nil {
 			return ctx.Replyf("Failed to encode mention message: %v", err)
 		}
@@ -767,7 +767,7 @@ func handleGetFilter(ctx *dispatch.Context) error {
 		return ctx.Replyf("Filter for word %q not found.", trigger)
 	}
 
-	msg, err := utils.DecodeProtoMessage(filterProto)
+	msg, err := whatsrook.DecodeProtoMessage(filterProto)
 	if err != nil {
 		return ctx.Replyf("Failed to decode filter: %v", err)
 	}

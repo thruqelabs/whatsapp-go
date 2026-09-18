@@ -13,13 +13,13 @@ import (
 	"time"
 	"whatsrook/util/logger"
 
-	utils "whatsrook"
+	"whatsrook"
 
 	"go.mau.fi/whatsmeow/types"
 )
 
 // runProcess launches an external plugin executable and handles both streaming action frames and plain text stdout.
-func (d *Dispatcher) runProcess(plugCtx *utils.PluginContext, path, name string, request Request) {
+func (d *Dispatcher) runProcess(plugCtx *whatsrook.PluginContext, path, name string, request Request) {
 	liveCtx, liveCancel := context.WithTimeout(context.Background(), d.liveTimeout)
 	defer liveCancel()
 
@@ -117,7 +117,7 @@ func (d *Dispatcher) runProcess(plugCtx *utils.PluginContext, path, name string,
 }
 
 // handleActionFrame processes a single action frame emitted by an external plugin on stdout.
-func (d *Dispatcher) handleActionFrame(ctx *utils.PluginContext, stdinPipe io.WriteCloser, line string) error {
+func (d *Dispatcher) handleActionFrame(ctx *whatsrook.PluginContext, stdinPipe io.WriteCloser, line string) error {
 	var frame Action
 	if err := json.Unmarshal([]byte(line), &frame); err != nil {
 		return err

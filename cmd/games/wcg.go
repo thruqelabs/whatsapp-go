@@ -12,7 +12,7 @@ import (
 	"unicode"
 	"whatsrook/util/logger"
 
-	utils "whatsrook"
+	"whatsrook"
 
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/types"
@@ -163,11 +163,11 @@ func (g *WCGGame) IsHost(user types.JID) bool {
 		return true
 	}
 	if g.Client != nil {
-		if !g.HostLID.IsEmpty() && utils.IsSameUserRaw(context.Background(), g.Client, g.HostLID, u) {
+		if !g.HostLID.IsEmpty() && whatsrook.IsSameUserRaw(context.Background(), g.Client, g.HostLID, u) {
 			logger.Debug("[WCG IsHost] IsSameUserRaw match on HostLID", "user", u.String(), "hostLID", g.HostLID.String())
 			return true
 		}
-		if !g.HostMention.IsEmpty() && utils.IsSameUserRaw(context.Background(), g.Client, g.HostMention, u) {
+		if !g.HostMention.IsEmpty() && whatsrook.IsSameUserRaw(context.Background(), g.Client, g.HostMention, u) {
 			logger.Debug("[WCG IsHost] IsSameUserRaw match on HostMention", "user", u.String(), "hostMention", g.HostMention.String())
 			return true
 		}
@@ -186,7 +186,7 @@ func (g *WCGGame) FindPlayerIndex(user types.JID) int {
 			return i
 		}
 		if g.Client != nil {
-			if utils.IsSameUserRaw(context.Background(), g.Client, p.LID, u) || utils.IsSameUserRaw(context.Background(), g.Client, p.MentionJID, u) {
+			if whatsrook.IsSameUserRaw(context.Background(), g.Client, p.LID, u) || whatsrook.IsSameUserRaw(context.Background(), g.Client, p.MentionJID, u) {
 				return i
 			}
 		}

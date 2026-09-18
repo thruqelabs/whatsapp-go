@@ -46,7 +46,7 @@ func (cli *Client) handleEncryptedMessage(ctx context.Context, node *waBinary.No
 	defer func() {
 		dur := time.Since(start)
 		if dur > 5*time.Millisecond {
-			cli.Log.Infof("[PERF] handleEncryptedMessage took %s", dur)
+			cli.Log.Debugf("[PERF] handleEncryptedMessage took %s", dur)
 		}
 	}()
 	info, err := cli.parseMessageInfo(node)
@@ -352,7 +352,7 @@ func (cli *Client) decryptMessages(ctx context.Context, info *types.MessageInfo,
 	defer func() {
 		dur := time.Since(decryptStart)
 		if dur > 5*time.Millisecond {
-			cli.Log.Infof("[PERF] decryptMessages id=%s took %s", info.ID, dur)
+			cli.Log.Debugf("[PERF] decryptMessages id=%s took %s", info.ID, dur)
 		}
 	}()
 	defer func() {
