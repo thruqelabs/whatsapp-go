@@ -1033,7 +1033,7 @@ Loop:
 				duration := time.Since(start)
 				close(doneChan)
 				if duration > 10*time.Millisecond || node.Tag == "message" {
-					cli.Log.Infof("[PERF] Node handling tag=%s took %s", node.Tag, duration)
+					cli.Log.Debugf("[PERF] Node handling tag=%s took %s", node.Tag, duration)
 				}
 				if duration > 5*time.Second {
 					cli.Log.Warnf("Node handling took %s for %s", duration, node)

@@ -755,7 +755,7 @@ func GetFilter(ctx context.Context, s *sqlstore.SQLStore, trigger string) (strin
 	err = db.QueryRow(ctx, query, ourJID, s.JID, trigger).Scan(&msgProto)
 	durDB := time.Since(dbStart)
 	if durDB > 1*time.Millisecond {
-		logger.Info("[PERF] store.GetFilter DB query", "trigger", trigger, "dbDuration", durDB, "total", time.Since(start))
+		logger.Debug("[PERF] store.GetFilter DB query", "trigger", trigger, "dbDuration", durDB, "total", time.Since(start))
 	}
 	if errors.Is(err, sql.ErrNoRows) {
 		_ = cache.Set(ctx, cacheKey, cacheSentinelNil, filterNegativeCacheTTL)
@@ -883,7 +883,7 @@ func GetBGM(ctx context.Context, s *sqlstore.SQLStore, trigger string) (string, 
 	err = db.QueryRow(ctx, query, ourJID, s.JID, trigger).Scan(&msgProto)
 	durDB := time.Since(dbStart)
 	if durDB > 1*time.Millisecond {
-		logger.Info("[PERF] store.GetBGM DB query", "trigger", trigger, "dbDuration", durDB, "total", time.Since(start))
+		logger.Debug("[PERF] store.GetBGM DB query", "trigger", trigger, "dbDuration", durDB, "total", time.Since(start))
 	}
 	if errors.Is(err, sql.ErrNoRows) {
 		_ = cache.Set(ctx, cacheKey, cacheSentinelNil, filterNegativeCacheTTL)
@@ -1141,7 +1141,7 @@ func PrewarmSettings(ctx context.Context, s *sqlstore.SQLStore) error {
 	}
 	hotSettingsLoaded.Store(true)
 	hotSettingsMu.Unlock()
-	logger.Info("[PERF] Prewarmed bot settings into memory", "count", count)
+	logger.Debug("[PERF] Prewarmed bot settings into memory", "count", count)
 	return rows.Err()
 }
 
@@ -1187,7 +1187,7 @@ func GetSetting(ctx context.Context, s *sqlstore.SQLStore, key string) (string, 
 	err = db.QueryRow(ctx, query, ourJID, s.JID, key).Scan(&value)
 	durDB := time.Since(dbStart)
 	if durDB > 1*time.Millisecond {
-		logger.Info("[PERF] store.GetSetting DB query", "key", key, "dbDuration", durDB, "total", time.Since(start))
+		logger.Debug("[PERF] store.GetSetting DB query", "key", key, "dbDuration", durDB, "total", time.Since(start))
 	}
 	if errors.Is(err, sql.ErrNoRows) {
 		hotSettingsMu.Lock()

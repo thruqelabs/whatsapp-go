@@ -96,7 +96,7 @@ func HandleGroupModeration(c *dispatch.Context, text string) bool {
 	defer func() {
 		dur := time.Since(modStart)
 		if dur > 1*time.Millisecond {
-			logger.Info("[PERF] HandleGroupModeration", "chat", c.Chat.String(), "elapsed", dur)
+			logger.Debug("[PERF] HandleGroupModeration", "chat", c.Chat.String(), "elapsed", dur)
 		}
 	}()
 	ctx := c.Ctx

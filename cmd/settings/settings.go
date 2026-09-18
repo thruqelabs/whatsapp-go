@@ -387,7 +387,7 @@ func HandleAFKAutoResponse(ctx context.Context, client *whatsmeow.Client, evt *e
 	defer func() {
 		dur := time.Since(afkStart)
 		if dur > 1*time.Millisecond {
-			logger.Info("[PERF] HandleAFKAutoResponse", "elapsed", dur)
+			logger.Debug("[PERF] HandleAFKAutoResponse", "elapsed", dur)
 		}
 	}()
 	s, ok := dispatch.GetSQLStore(client)
@@ -1034,7 +1034,7 @@ func HandlePendingBotCustomizationReply(ctx context.Context, client *whatsmeow.C
 	defer func() {
 		dur := time.Since(wizStart)
 		if dur > 1*time.Millisecond {
-			logger.Info("[PERF] HandlePendingBotCustomizationReply", "elapsed", dur)
+			logger.Debug("[PERF] HandlePendingBotCustomizationReply", "elapsed", dur)
 		}
 	}()
 

@@ -604,7 +604,7 @@ func (b *Bot) WAEventHandler(evt any) {
 			msgStart := time.Now()
 			msgID := v.Info.ID
 			defer func() {
-				logger.Info("[PERF] events.Message handler finished", "msgID", msgID, "elapsed", time.Since(msgStart))
+				logger.Debug("[PERF] events.Message handler finished", "msgID", msgID, "elapsed", time.Since(msgStart))
 			}()
 
 			if v.Info.Chat.Server == "broadcast" || v.Info.Chat.String() == "status@broadcast" {
@@ -632,33 +632,33 @@ func (b *Bot) WAEventHandler(evt any) {
 
 			t0 := time.Now()
 			if calls.HandlePendingAudioReply(context.Background(), cli, v) {
-				logger.Info("[PERF] HandlePendingAudioReply intercepted", "msgID", msgID, "elapsed", time.Since(t0))
+				logger.Debug("[PERF] HandlePendingAudioReply intercepted", "msgID", msgID, "elapsed", time.Since(t0))
 				return
 			}
 			tAudio := time.Since(t0)
 
 			t0 = time.Now()
 			if info.HandlePendingMenuMediaReply(context.Background(), cli, v) {
-				logger.Info("[PERF] HandlePendingMenuMediaReply intercepted", "msgID", msgID, "elapsed", time.Since(t0))
+				logger.Debug("[PERF] HandlePendingMenuMediaReply intercepted", "msgID", msgID, "elapsed", time.Since(t0))
 				return
 			}
 			tMenu := time.Since(t0)
 
 			t0 = time.Now()
 			if settings.HandlePendingBotCustomizationReply(context.Background(), cli, v) {
-				logger.Info("[PERF] HandlePendingBotCustomizationReply intercepted", "msgID", msgID, "elapsed", time.Since(t0))
+				logger.Debug("[PERF] HandlePendingBotCustomizationReply intercepted", "msgID", msgID, "elapsed", time.Since(t0))
 				return
 			}
 			tCustom := time.Since(t0)
 
 			t0 = time.Now()
 			if group.HandlePendingCaptchaReply(context.Background(), cli, v) {
-				logger.Info("[PERF] HandlePendingCaptchaReply intercepted", "msgID", msgID, "elapsed", time.Since(t0))
+				logger.Debug("[PERF] HandlePendingCaptchaReply intercepted", "msgID", msgID, "elapsed", time.Since(t0))
 				return
 			}
 			tCaptcha := time.Since(t0)
 
-			logger.Info("[PERF] Pre-dispatch reply checks completed",
+			logger.Debug("[PERF] Pre-dispatch reply checks completed",
 				"msgID", msgID,
 				"audio", tAudio,
 				"menu", tMenu,
@@ -668,10 +668,10 @@ func (b *Bot) WAEventHandler(evt any) {
 
 			t0 = time.Now()
 			if dispatch.Dispatch(context.Background(), cli, v) {
-				logger.Info("[PERF] dispatch.Dispatch completed (handled)", "msgID", msgID, "elapsed", time.Since(t0))
+				logger.Debug("[PERF] dispatch.Dispatch completed (handled)", "msgID", msgID, "elapsed", time.Since(t0))
 				return
 			}
-			logger.Info("[PERF] dispatch.Dispatch completed (unhandled)", "msgID", msgID, "elapsed", time.Since(t0))
+			logger.Debug("[PERF] dispatch.Dispatch completed (unhandled)", "msgID", msgID, "elapsed", time.Since(t0))
 
 			payload := buildIncomingMessagePayload(v)
 			b.hub.Broadcast(EventMessage{

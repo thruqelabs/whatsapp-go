@@ -68,7 +68,7 @@ func Dispatch(ctx context.Context, client *whatsmeow.Client, evt *events.Message
 	defer func() {
 		dur := time.Since(dispatchStart)
 		if dur > 1*time.Millisecond {
-			logger.Info("[PERF] Dispatch total execution", "msgID", msgID, "elapsed", dur)
+			logger.Debug("[PERF] Dispatch total execution", "msgID", msgID, "elapsed", dur)
 		}
 	}()
 	RecordRecentMessage(evt)
@@ -213,7 +213,7 @@ func Dispatch(ctx context.Context, client *whatsmeow.Client, evt *events.Message
 
 	tPre := time.Now()
 	prefixes := activePrefixes(ctx, client)
-	logger.Info("[PERF] Dispatch: activePrefixes", "msgID", msgID, "elapsed", time.Since(tPre), "prefixes", prefixes)
+	logger.Debug("[PERF] Dispatch: activePrefixes", "msgID", msgID, "elapsed", time.Since(tPre), "prefixes", prefixes)
 
 	isCommand := false
 	matchedBody := ""
@@ -269,7 +269,7 @@ func Dispatch(ctx context.Context, client *whatsmeow.Client, evt *events.Message
 		handled := handleFiltersAndBGM(ctx, client, s.SQLStore, evt, text)
 		durFilt := time.Since(tFilt)
 		if durFilt > 1*time.Millisecond || handled {
-			logger.Info("[PERF] Dispatch: handleFiltersAndBGM", "msgID", msgID, "elapsed", durFilt, "handled", handled)
+			logger.Debug("[PERF] Dispatch: handleFiltersAndBGM", "msgID", msgID, "elapsed", durFilt, "handled", handled)
 		}
 		if handled {
 			return true
@@ -287,7 +287,7 @@ func Dispatch(ctx context.Context, client *whatsmeow.Client, evt *events.Message
 		handled := it.fn(cctx, text)
 		durIt := time.Since(tIt)
 		if durIt > 1*time.Millisecond || handled {
-			logger.Info("[PERF] Dispatch: pre-interceptor", "name", it.name, "elapsed", durIt, "handled", handled)
+			logger.Debug("[PERF] Dispatch: pre-interceptor", "name", it.name, "elapsed", durIt, "handled", handled)
 		}
 		if handled {
 			return true
@@ -590,7 +590,7 @@ func runCommand(ctx context.Context, client *whatsmeow.Client, evt *events.Messa
 	}
 	durChecks := time.Since(tChecks)
 	if durChecks > 1*time.Millisecond {
-		logger.Info("[PERF] runCommand: permission and ban checks", "cmd", cmdName, "elapsed", durChecks)
+		logger.Debug("[PERF] runCommand: permission and ban checks", "cmd", cmdName, "elapsed", durChecks)
 	}
 
 	go func() {
@@ -603,9 +603,9 @@ func runCommand(ctx context.Context, client *whatsmeow.Client, evt *events.Messa
 		}()
 
 		cmdStart := time.Now()
-		logger.Info("[PERF] Invoking cmd.Handler", "cmd", cmdName, "preHandlerElapsed", time.Since(runStart))
+		logger.Debug("[PERF] Invoking cmd.Handler", "cmd", cmdName, "preHandlerElapsed", time.Since(runStart))
 		err := cmd.Handler(cctx)
-		logger.Info("[PERF] cmd.Handler finished", "cmd", cmdName, "duration", time.Since(cmdStart), "err", err)
+		logger.Debug("[PERF] cmd.Handler finished", "cmd", cmdName, "duration", time.Since(cmdStart), "err", err)
 		if err != nil {
 			LogHandlerErrWithContext(cctx, cmdName, err)
 			_ = cctx.Replyf("%v", err)

@@ -57,7 +57,7 @@ func runRes(args []string) error {
 		"--icon", iconPath,
 		"--manifest", "cli",
 		"--product-name", "WhatsRook",
-		"--file-description", "WhatsRook - Command-Line Hybrid-Automation WhatsApp Client",
+		"--file-description", "WhatsApp Automation Client",
 		"--copyright", fmt.Sprintf("Copyright © %d Thruqe", year),
 		"--original-filename", "whatsrook.exe",
 		"--file-version", fileVersion,
