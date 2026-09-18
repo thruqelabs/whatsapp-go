@@ -8,7 +8,7 @@ const (
 	// DefaultPluginDirEnv is the environment variable override for external plugins directory.
 	DefaultPluginDirEnv = "WHATSROOK_PLUGIN_DIR"
 	// DefaultReleaseRegistry is the official release registry URL.
-	DefaultReleaseRegistry = "https://github.com/Thruqe/whatsrook-externals/releases/latest/download"
+	DefaultReleaseRegistry = "https://github.com/thruqe/whatsrook-externals/releases/latest/download"
 	// MaxPluginBinarySize is the maximum allowed size for an external plugin binary (64 MiB).
 	MaxPluginBinarySize = 64 << 20
 	// DefaultPluginTimeout is the standard execution timeout for one-shot plugins.

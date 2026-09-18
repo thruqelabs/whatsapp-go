@@ -304,7 +304,7 @@ func sanitizeProtoDefinitions(protoDir string) error {
 
 	waE2EFile := filepath.Join(protoDir, "waE2E", "WAWebProtobufsE2E.proto")
 	if _, err := os.Stat(waE2EFile); err == nil {
-		if err := sanitizeWaE2EProto(waE2EFile, referencedTypes); err != nil {
+		if err := sanitizeWaE2EProto(waE2EFile); err != nil {
 			return fmt.Errorf("failed sanitizing waE2E proto: %w", err)
 		}
 	}
@@ -368,7 +368,7 @@ func sanitizeWaBotMetadataProto(filePath string) error {
 	return nil
 }
 
-func sanitizeWaE2EProto(filePath string, referencedTypes map[string]bool) error {
+func sanitizeWaE2EProto(filePath string) error {
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
@@ -541,7 +541,7 @@ func syncProtosFromWaProto(rootDir, protoDir string) error {
 
 	if protoSource == "" {
 		// Download from GitHub with fallback
-		fmt.Println("Downloading latest WAProto.proto from github.com/Thruqe/wa-proto...")
+		fmt.Println("Downloading latest WAProto.proto from github.com/thruqe/WAProto...")
 		downloadedPath, cleanup, err := fetchRemoteWaProto()
 		if err != nil {
 			return fmt.Errorf("failed fetching remote WAProto.proto: %w", err)
@@ -569,7 +569,7 @@ func syncProtosFromWaProto(rootDir, protoDir string) error {
 		)
 		splitCmd.Dir = localWaProto
 	} else {
-		splitCmd = exec.Command("go", "run", "github.com/Thruqe/wa-proto@latest", "split",
+		splitCmd = exec.Command("go", "run", "github.com/thruqe/WAProto@latest", "split",
 			"-proto", protoSource,
 			"-out", protoDir,
 			"-clientpayload", clientPayloadPath,
@@ -620,8 +620,8 @@ func validateProtoSchema(filePath string) error {
 
 func fetchRemoteWaProto() (string, func(), error) {
 	urls := []string{
-		"https://raw.githubusercontent.com/Thruqe/wa-proto/main/WAProto.proto",
-		"https://raw.githubusercontent.com/Thruqe/wa-proto/v2.3000.1046900546/WAProto.proto",
+		"https://raw.githubusercontent.com/thruqe/WAProto/main/WAProto.proto",
+		"https://raw.githubusercontent.com/thruqe/WAProto/v2.3000.1046900546/WAProto.proto",
 	}
 
 	for _, u := range urls {

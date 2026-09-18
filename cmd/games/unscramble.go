@@ -545,7 +545,7 @@ func GetRandomWordWithHint(length int) (original string, scrambled string, hint 
 }
 
 // DictionaryDBURL points to the pre-built SQLite English dictionary database.
-const DictionaryDBURL = "https://github.com/Thruqe/English-Dictionary-SQLite/raw/refs/heads/master/Dictionary.db"
+const DictionaryDBURL = "https://github.com/thruqe/English-Dictionary-SQLite/raw/refs/heads/master/Dictionary.db"
 
 var (
 	dictionaryDB   *sql.DB

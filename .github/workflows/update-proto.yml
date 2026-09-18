@@ -104,7 +104,7 @@ jobs:
           PR_BODY: |
             ### Automated WhatsApp Web Protobuf Sync
 
-            This automated PR updates `lib/proto` definitions and the client revision in `lib/store/clientpayload.go` to `v${{ steps.check-changes.outputs.version }}` generated from [Thruqe/wa-proto](https://github.com/Thruqe/wa-proto).
+            This automated PR updates `lib/proto` definitions and the client revision in `lib/store/clientpayload.go` to `v${{ steps.check-changes.outputs.version }}` generated from [thruqe/WAProto](https://github.com/thruqe/WAProto).
 
             #### Automated Steps Executed
             - Downloaded latest `WAProto.proto` schema

@@ -1,7 +1,7 @@
 blank_issues_enabled: true
 contact_links:
   - name: 🔒 Security Vulnerability
-    url: https://github.com/Thruqe/whatsrook/blob/master/SECURITY.md
+    url: https://github.com/thruqe/whatsrook/blob/master/SECURITY.md
     about: Please report security issues privately according to our security policy.
   - name: 💬 Telegram Community
     url: https://t.me/whatsrook
