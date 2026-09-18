@@ -12,7 +12,15 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"time"
 )
+
+const (
+	waProtoRepo   = "thruqe/WAProto"
+	waProtoBranch = "main"
+)
+
+var httpClient = &http.Client{Timeout: 60 * time.Second}
 
 func runProto(args []string) error {
 	rootDir, err := findRepoRoot()
@@ -82,7 +90,9 @@ func runProto(args []string) error {
 		if !d.IsDir() && strings.HasSuffix(d.Name(), ".proto") {
 			relPath, relErr := filepath.Rel(protoDir, path)
 			if relErr == nil {
-				if targetFilter == "" || strings.Contains(strings.ToLower(relPath), targetFilter) {
+				// protoc requires forward slashes in file arguments, even on Windows.
+				relPath = filepath.ToSlash(relPath)
+				if targetFilter == "" || strings.Contains(strings.ToLower(relPath), strings.ToLower(filepath.ToSlash(targetFilter))) {
 					protoFiles = append(protoFiles, relPath)
 				}
 			}
@@ -526,57 +536,28 @@ func printProtocInstallInstructions() {
 func syncProtosFromWaProto(rootDir, protoDir string) error {
 	clientPayloadPath := filepath.Join(rootDir, "lib", "store", "clientpayload.go")
 
-	// 1. Locate or fetch WAProto.proto
-	protoSource := ""
-	var cleanupTemp func()
-
-	localWaProto := filepath.Join(rootDir, "..", "wa-proto")
-	if stat, err := os.Stat(filepath.Join(localWaProto, "WAProto.proto")); err == nil && !stat.IsDir() {
-		localPath := filepath.Join(localWaProto, "WAProto.proto")
-		if isValidProtoSchema(localPath) {
-			protoSource = localPath
-			fmt.Printf("Using valid local WAProto schema from %s\n", protoSource)
-		}
+	// 1. Download WAProto.proto
+	fmt.Printf("Downloading latest WAProto.proto from github.com/%s...\n", waProtoRepo)
+	protoSource, cleanup, err := fetchRemoteWaProto()
+	if err != nil {
+		return fmt.Errorf("failed fetching remote WAProto.proto: %w", err)
 	}
+	defer cleanup()
 
-	if protoSource == "" {
-		// Download from GitHub with fallback
-		fmt.Println("Downloading latest WAProto.proto from github.com/thruqe/WAProto...")
-		downloadedPath, cleanup, err := fetchRemoteWaProto()
-		if err != nil {
-			return fmt.Errorf("failed fetching remote WAProto.proto: %w", err)
-		}
-		protoSource = downloadedPath
-		cleanupTemp = cleanup
-	}
-	if cleanupTemp != nil {
-		defer cleanupTemp()
-	}
-
-	// Validate protoSource has sufficient message definitions before continuing
 	if err := validateProtoSchema(protoSource); err != nil {
 		return fmt.Errorf("validation failed for %s: %w", protoSource, err)
 	}
 
-	// 2. Run wa-proto split command
+	// 2. Run the wa-proto split tool
 	fmt.Println("Splitting WAProto into modular lib/proto packages...")
-	var splitCmd *exec.Cmd
-	if _, err := os.Stat(filepath.Join(localWaProto, "main.go")); err == nil {
-		splitCmd = exec.Command("go", "run", ".", "split",
-			"-proto", protoSource,
-			"-out", protoDir,
-			"-clientpayload", clientPayloadPath,
-		)
-		splitCmd.Dir = localWaProto
-	} else {
-		splitCmd = exec.Command("go", "run", "github.com/thruqe/WAProto@latest", "split",
-			"-proto", protoSource,
-			"-out", protoDir,
-			"-clientpayload", clientPayloadPath,
-		)
-		splitCmd.Dir = rootDir
-	}
-
+	splitCmd := exec.Command("go", "run", "github.com/"+waProtoRepo+"@latest", "split",
+		"-proto", protoSource,
+		"-out", protoDir,
+		"-clientpayload", clientPayloadPath,
+	)
+	splitCmd.Dir = rootDir
+	// Bypass the module proxy cache so a freshly pushed go.mod fix is seen immediately.
+	splitCmd.Env = append(os.Environ(), "GOPROXY=direct", "GONOSUMDB=github.com/thruqe/*", "GOFLAGS=-mod=mod")
 	splitCmd.Stdout = os.Stdout
 	splitCmd.Stderr = os.Stderr
 	if err := splitCmd.Run(); err != nil {
@@ -620,45 +601,57 @@ func validateProtoSchema(filePath string) error {
 
 func fetchRemoteWaProto() (string, func(), error) {
 	urls := []string{
-		"https://raw.githubusercontent.com/thruqe/WAProto/main/WAProto.proto",
-		"https://raw.githubusercontent.com/thruqe/WAProto/v2.3000.1046900546/WAProto.proto",
+		fmt.Sprintf("https://raw.githubusercontent.com/%s/%s/WAProto.proto", waProtoRepo, waProtoBranch),
+		fmt.Sprintf("https://raw.githubusercontent.com/%s/v2.3000.1046900546/WAProto.proto", waProtoRepo),
 	}
 
+	var lastErr error
 	for _, u := range urls {
-		tmpFile, err := os.CreateTemp("", "WAProto-*.proto")
+		path, cleanup, err := downloadToTemp(u)
 		if err != nil {
-			return "", nil, fmt.Errorf("creating temp file: %w", err)
-		}
-		cleanup := func() {
-			_ = os.Remove(tmpFile.Name())
-		}
-
-		resp, err := http.Get(u)
-		if err != nil {
-			cleanup()
+			lastErr = err
 			continue
 		}
-
-		if resp.StatusCode != http.StatusOK {
-			resp.Body.Close()
-			cleanup()
-			continue
-		}
-
-		_, copyErr := io.Copy(tmpFile, resp.Body)
-		resp.Body.Close()
-		_ = tmpFile.Close()
-
-		if copyErr != nil {
-			cleanup()
-			continue
-		}
-
-		if isValidProtoSchema(tmpFile.Name()) {
-			return tmpFile.Name(), cleanup, nil
+		if isValidProtoSchema(path) {
+			return path, cleanup, nil
 		}
 		cleanup()
+		lastErr = fmt.Errorf("%s returned insufficient message definitions", u)
 	}
 
-	return "", nil, fmt.Errorf("all remote WAProto.proto sources failed or returned insufficient definitions")
+	if lastErr == nil {
+		lastErr = fmt.Errorf("no sources available")
+	}
+	return "", nil, fmt.Errorf("all remote WAProto.proto sources failed: %w", lastErr)
+}
+
+// downloadToTemp fetches url into a temp file and returns its path plus a cleanup func.
+func downloadToTemp(url string) (string, func(), error) {
+	resp, err := httpClient.Get(url)
+	if err != nil {
+		return "", nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", nil, fmt.Errorf("GET %s: unexpected status %s", url, resp.Status)
+	}
+
+	tmpFile, err := os.CreateTemp("", "WAProto-*.proto")
+	if err != nil {
+		return "", nil, fmt.Errorf("creating temp file: %w", err)
+	}
+	cleanup := func() { _ = os.Remove(tmpFile.Name()) }
+
+	if _, err := io.Copy(tmpFile, resp.Body); err != nil {
+		_ = tmpFile.Close()
+		cleanup()
+		return "", nil, err
+	}
+	if err := tmpFile.Close(); err != nil {
+		cleanup()
+		return "", nil, err
+	}
+
+	return tmpFile.Name(), cleanup, nil
 }
