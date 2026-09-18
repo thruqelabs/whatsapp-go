@@ -30,6 +30,7 @@ type GroupHistory struct {
 	UncountedAssociatedMessageLists []*UnCountedAssociatedMessageList `protobuf:"bytes,2,rep,name=uncountedAssociatedMessageLists" json:"uncountedAssociatedMessageLists,omitempty"`
 	CommentMessages                 []*waWeb.WebMessageInfo           `protobuf:"bytes,3,rep,name=commentMessages" json:"commentMessages,omitempty"`
 	OutOfWindowPinnedMessages       []*waWeb.WebMessageInfo           `protobuf:"bytes,4,rep,name=outOfWindowPinnedMessages" json:"outOfWindowPinnedMessages,omitempty"`
+	ThemeMessage                    *waWeb.WebMessageInfo             `protobuf:"bytes,5,opt,name=themeMessage" json:"themeMessage,omitempty"`
 	unknownFields                   protoimpl.UnknownFields
 	sizeCache                       protoimpl.SizeCache
 }
@@ -92,12 +93,20 @@ func (x *GroupHistory) GetOutOfWindowPinnedMessages() []*waWeb.WebMessageInfo {
 	return nil
 }
 
+func (x *GroupHistory) GetThemeMessage() *waWeb.WebMessageInfo {
+	if x != nil {
+		return x.ThemeMessage
+	}
+	return nil
+}
+
 type GroupHistoryWithMessageBytes struct {
 	state                           protoimpl.MessageState                            `protogen:"open.v1"`
 	Messages                        []*WebMessageInfoWithMessageBytes                 `protobuf:"bytes,1,rep,name=messages" json:"messages,omitempty"`
 	UncountedAssociatedMessageLists []*UnCountedAssociatedMessageListWithMessageBytes `protobuf:"bytes,2,rep,name=uncountedAssociatedMessageLists" json:"uncountedAssociatedMessageLists,omitempty"`
 	CommentMessages                 []*WebMessageInfoWithMessageBytes                 `protobuf:"bytes,3,rep,name=commentMessages" json:"commentMessages,omitempty"`
 	OutOfWindowPinnedMessages       []*WebMessageInfoWithMessageBytes                 `protobuf:"bytes,4,rep,name=outOfWindowPinnedMessages" json:"outOfWindowPinnedMessages,omitempty"`
+	ThemeMessage                    *WebMessageInfoWithMessageBytes                   `protobuf:"bytes,5,opt,name=themeMessage" json:"themeMessage,omitempty"`
 	unknownFields                   protoimpl.UnknownFields
 	sizeCache                       protoimpl.SizeCache
 }
@@ -156,6 +165,13 @@ func (x *GroupHistoryWithMessageBytes) GetCommentMessages() []*WebMessageInfoWit
 func (x *GroupHistoryWithMessageBytes) GetOutOfWindowPinnedMessages() []*WebMessageInfoWithMessageBytes {
 	if x != nil {
 		return x.OutOfWindowPinnedMessages
+	}
+	return nil
+}
+
+func (x *GroupHistoryWithMessageBytes) GetThemeMessage() *WebMessageInfoWithMessageBytes {
+	if x != nil {
+		return x.ThemeMessage
 	}
 	return nil
 }
@@ -328,17 +344,19 @@ var File_waGroupHistory_WAWebProtobufsGroupHistory_proto protoreflect.FileDescri
 
 const file_waGroupHistory_WAWebProtobufsGroupHistory_proto_rawDesc = "" +
 	"\n" +
-	"/waGroupHistory/WAWebProtobufsGroupHistory.proto\x12\x1aWAWebProtobufsGroupHistory\x1a\x17waCommon/WACommon.proto\x1a\x1dwaE2E/WAWebProtobufsE2E.proto\x1a\x1dwaWeb/WAWebProtobufsWeb.proto\"\x82\x03\n" +
+	"/waGroupHistory/WAWebProtobufsGroupHistory.proto\x12\x1aWAWebProtobufsGroupHistory\x1a\x17waCommon/WACommon.proto\x1a\x1dwaE2E/WAWebProtobufsE2E.proto\x1a\x1dwaWeb/WAWebProtobufsWeb.proto\"\xc9\x03\n" +
 	"\fGroupHistory\x12=\n" +
 	"\bmessages\x18\x01 \x03(\v2!.WAWebProtobufsWeb.WebMessageInfoR\bmessages\x12\x84\x01\n" +
 	"\x1funcountedAssociatedMessageLists\x18\x02 \x03(\v2:.WAWebProtobufsGroupHistory.UnCountedAssociatedMessageListR\x1funcountedAssociatedMessageLists\x12K\n" +
 	"\x0fcommentMessages\x18\x03 \x03(\v2!.WAWebProtobufsWeb.WebMessageInfoR\x0fcommentMessages\x12_\n" +
-	"\x19outOfWindowPinnedMessages\x18\x04 \x03(\v2!.WAWebProtobufsWeb.WebMessageInfoR\x19outOfWindowPinnedMessages\"\xed\x03\n" +
+	"\x19outOfWindowPinnedMessages\x18\x04 \x03(\v2!.WAWebProtobufsWeb.WebMessageInfoR\x19outOfWindowPinnedMessages\x12E\n" +
+	"\fthemeMessage\x18\x05 \x01(\v2!.WAWebProtobufsWeb.WebMessageInfoR\fthemeMessage\"\xcd\x04\n" +
 	"\x1cGroupHistoryWithMessageBytes\x12V\n" +
 	"\bmessages\x18\x01 \x03(\v2:.WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytesR\bmessages\x12\x94\x01\n" +
 	"\x1funcountedAssociatedMessageLists\x18\x02 \x03(\v2J.WAWebProtobufsGroupHistory.UnCountedAssociatedMessageListWithMessageBytesR\x1funcountedAssociatedMessageLists\x12d\n" +
 	"\x0fcommentMessages\x18\x03 \x03(\v2:.WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytesR\x0fcommentMessages\x12x\n" +
-	"\x19outOfWindowPinnedMessages\x18\x04 \x03(\v2:.WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytesR\x19outOfWindowPinnedMessages\"\xfc\x01\n" +
+	"\x19outOfWindowPinnedMessages\x18\x04 \x03(\v2:.WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytesR\x19outOfWindowPinnedMessages\x12^\n" +
+	"\fthemeMessage\x18\x05 \x01(\v2:.WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytesR\fthemeMessage\"\xfc\x01\n" +
 	"\x1eUnCountedAssociatedMessageList\x12=\n" +
 	"\bmessages\x18\x01 \x03(\v2!.WAWebProtobufsWeb.WebMessageInfoR\bmessages\x12:\n" +
 	"\rparentMessage\x18\x02 \x01(\v2\x14.WACommon.MessageKeyR\rparentMessage\x12_\n" +
@@ -378,21 +396,23 @@ var file_waGroupHistory_WAWebProtobufsGroupHistory_proto_depIdxs = []int32{
 	2,  // 1: WAWebProtobufsGroupHistory.GroupHistory.uncountedAssociatedMessageLists:type_name -> WAWebProtobufsGroupHistory.UnCountedAssociatedMessageList
 	5,  // 2: WAWebProtobufsGroupHistory.GroupHistory.commentMessages:type_name -> WAWebProtobufsWeb.WebMessageInfo
 	5,  // 3: WAWebProtobufsGroupHistory.GroupHistory.outOfWindowPinnedMessages:type_name -> WAWebProtobufsWeb.WebMessageInfo
-	4,  // 4: WAWebProtobufsGroupHistory.GroupHistoryWithMessageBytes.messages:type_name -> WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes
-	3,  // 5: WAWebProtobufsGroupHistory.GroupHistoryWithMessageBytes.uncountedAssociatedMessageLists:type_name -> WAWebProtobufsGroupHistory.UnCountedAssociatedMessageListWithMessageBytes
-	4,  // 6: WAWebProtobufsGroupHistory.GroupHistoryWithMessageBytes.commentMessages:type_name -> WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes
-	4,  // 7: WAWebProtobufsGroupHistory.GroupHistoryWithMessageBytes.outOfWindowPinnedMessages:type_name -> WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes
-	5,  // 8: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageList.messages:type_name -> WAWebProtobufsWeb.WebMessageInfo
-	6,  // 9: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageList.parentMessage:type_name -> WACommon.MessageKey
-	7,  // 10: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageList.associationType:type_name -> WAWebProtobufsE2E.MessageAssociation.AssociationType
-	4,  // 11: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageListWithMessageBytes.messages:type_name -> WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes
-	6,  // 12: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageListWithMessageBytes.parentMessage:type_name -> WACommon.MessageKey
-	6,  // 13: WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes.key:type_name -> WACommon.MessageKey
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	5,  // 4: WAWebProtobufsGroupHistory.GroupHistory.themeMessage:type_name -> WAWebProtobufsWeb.WebMessageInfo
+	4,  // 5: WAWebProtobufsGroupHistory.GroupHistoryWithMessageBytes.messages:type_name -> WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes
+	3,  // 6: WAWebProtobufsGroupHistory.GroupHistoryWithMessageBytes.uncountedAssociatedMessageLists:type_name -> WAWebProtobufsGroupHistory.UnCountedAssociatedMessageListWithMessageBytes
+	4,  // 7: WAWebProtobufsGroupHistory.GroupHistoryWithMessageBytes.commentMessages:type_name -> WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes
+	4,  // 8: WAWebProtobufsGroupHistory.GroupHistoryWithMessageBytes.outOfWindowPinnedMessages:type_name -> WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes
+	4,  // 9: WAWebProtobufsGroupHistory.GroupHistoryWithMessageBytes.themeMessage:type_name -> WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes
+	5,  // 10: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageList.messages:type_name -> WAWebProtobufsWeb.WebMessageInfo
+	6,  // 11: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageList.parentMessage:type_name -> WACommon.MessageKey
+	7,  // 12: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageList.associationType:type_name -> WAWebProtobufsE2E.MessageAssociation.AssociationType
+	4,  // 13: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageListWithMessageBytes.messages:type_name -> WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes
+	6,  // 14: WAWebProtobufsGroupHistory.UnCountedAssociatedMessageListWithMessageBytes.parentMessage:type_name -> WACommon.MessageKey
+	6,  // 15: WAWebProtobufsGroupHistory.WebMessageInfoWithMessageBytes.key:type_name -> WACommon.MessageKey
+	16, // [16:16] is the sub-list for method output_type
+	16, // [16:16] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_waGroupHistory_WAWebProtobufsGroupHistory_proto_init() }

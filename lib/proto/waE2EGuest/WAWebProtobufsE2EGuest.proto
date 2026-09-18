@@ -958,6 +958,7 @@ message Message {
 		optional int64 messageCount = 3;
 		repeated string nonHistoryReceivers = 4;
 		optional int64 oldestMessageTimestampInBundle = 5;
+		optional bool includesChatTheme = 6;
 	}
 
 	message MessageHistoryNotice {
@@ -1877,6 +1878,7 @@ message Message {
 		optional string metadataUrl = 30;
 		optional Message.VideoMessage.VideoSourceType videoSourceType = 31;
 		optional string dashManifestUrl = 33;
+		optional int64 smartThumbnailTs = 34;
 	}
 
 	optional string conversation = 1;

@@ -10115,6 +10115,7 @@ type Message_MessageHistoryMetadata struct {
 	MessageCount                   *int64                 `protobuf:"varint,3,opt,name=messageCount" json:"messageCount,omitempty"`
 	NonHistoryReceivers            []string               `protobuf:"bytes,4,rep,name=nonHistoryReceivers" json:"nonHistoryReceivers,omitempty"`
 	OldestMessageTimestampInBundle *int64                 `protobuf:"varint,5,opt,name=oldestMessageTimestampInBundle" json:"oldestMessageTimestampInBundle,omitempty"`
+	IncludesChatTheme              *bool                  `protobuf:"varint,6,opt,name=includesChatTheme" json:"includesChatTheme,omitempty"`
 	unknownFields                  protoimpl.UnknownFields
 	sizeCache                      protoimpl.SizeCache
 }
@@ -10182,6 +10183,13 @@ func (x *Message_MessageHistoryMetadata) GetOldestMessageTimestampInBundle() int
 		return *x.OldestMessageTimestampInBundle
 	}
 	return 0
+}
+
+func (x *Message_MessageHistoryMetadata) GetIncludesChatTheme() bool {
+	if x != nil && x.IncludesChatTheme != nil {
+		return *x.IncludesChatTheme
+	}
+	return false
 }
 
 type Message_MessageHistoryNotice struct {
@@ -14249,6 +14257,7 @@ type Message_VideoMessage struct {
 	MetadataUrl                             *string                               `protobuf:"bytes,30,opt,name=metadataUrl" json:"metadataUrl,omitempty"`
 	VideoSourceType                         *Message_VideoMessage_VideoSourceType `protobuf:"varint,31,opt,name=videoSourceType,enum=WAWebProtobufsE2EGuest.Message_VideoMessage_VideoSourceType" json:"videoSourceType,omitempty"`
 	DashManifestUrl                         *string                               `protobuf:"bytes,33,opt,name=dashManifestUrl" json:"dashManifestUrl,omitempty"`
+	SmartThumbnailTs                        *int64                                `protobuf:"varint,34,opt,name=smartThumbnailTs" json:"smartThumbnailTs,omitempty"`
 	unknownFields                           protoimpl.UnknownFields
 	sizeCache                               protoimpl.SizeCache
 }
@@ -14498,6 +14507,13 @@ func (x *Message_VideoMessage) GetDashManifestUrl() string {
 		return *x.DashManifestUrl
 	}
 	return ""
+}
+
+func (x *Message_VideoMessage) GetSmartThumbnailTs() int64 {
+	if x != nil && x.SmartThumbnailTs != nil {
+		return *x.SmartThumbnailTs
+	}
+	return 0
 }
 
 type Message_ButtonsMessage_Button struct {
@@ -18856,7 +18872,7 @@ var File_waE2EGuest_WAWebProtobufsE2EGuest_proto protoreflect.FileDescriptor
 
 const file_waE2EGuest_WAWebProtobufsE2EGuest_proto_rawDesc = "" +
 	"\n" +
-	"'waE2EGuest/WAWebProtobufsE2EGuest.proto\x12\x16WAWebProtobufsE2EGuest\x1a'waAICommon/WAWebProtobufsAICommon.proto\x1a\x1dwaAea/WAWebProtobufsAea.proto\x1a!waBotMetadata/WABotMetadata.proto\x1a\x17waCommon/WACommon.proto\x1a1waCommonParameterised/WACommonParameterised.proto\x1a#waCompanionReg/WACompanionReg.proto\x1a\x1dwaE2E/WAWebProtobufsE2E.proto\x1a\x1bwaMmsRetry/WAMmsRetry.proto\x1a#waMsgTransport/WAMsgTransport.proto\x1a+waServerSync/WAWebProtobufsServerSync.proto\"\x9c\xbc\x04\n" +
+	"'waE2EGuest/WAWebProtobufsE2EGuest.proto\x12\x16WAWebProtobufsE2EGuest\x1a'waAICommon/WAWebProtobufsAICommon.proto\x1a\x1dwaAea/WAWebProtobufsAea.proto\x1a!waBotMetadata/WABotMetadata.proto\x1a\x17waCommon/WACommon.proto\x1a1waCommonParameterised/WACommonParameterised.proto\x1a#waCompanionReg/WACompanionReg.proto\x1a\x1dwaE2E/WAWebProtobufsE2E.proto\x1a\x1bwaMmsRetry/WAMmsRetry.proto\x1a#waMsgTransport/WAMsgTransport.proto\x1a+waServerSync/WAWebProtobufsServerSync.proto\"\xf6\xbc\x04\n" +
 	"\aMessage\x12\"\n" +
 	"\fconversation\x18\x01 \x01(\tR\fconversation\x12e\n" +
 	"\x13extendedTextMessage\x18\x06 \x01(\v23.WAWebProtobufsE2EGuest.Message.ExtendedTextMessageR\x13extendedTextMessage\x12Z\n" +
@@ -19749,13 +19765,14 @@ const file_waE2EGuest_WAWebProtobufsE2EGuest_proto_rawDesc = "" +
 	"directPath\x12,\n" +
 	"\x11mediaKeyTimestamp\x18\x06 \x01(\x03R\x11mediaKeyTimestamp\x12M\n" +
 	"\vcontextInfo\x18\a \x01(\v2+.WAWebProtobufsE2EGuest.Message.ContextInfoR\vcontextInfo\x12n\n" +
-	"\x16messageHistoryMetadata\x18\b \x01(\v26.WAWebProtobufsE2EGuest.Message.MessageHistoryMetadataR\x16messageHistoryMetadata\x1a\xaa\x02\n" +
+	"\x16messageHistoryMetadata\x18\b \x01(\v26.WAWebProtobufsE2EGuest.Message.MessageHistoryMetadataR\x16messageHistoryMetadata\x1a\xd8\x02\n" +
 	"\x16MessageHistoryMetadata\x12*\n" +
 	"\x10historyReceivers\x18\x01 \x03(\tR\x10historyReceivers\x12F\n" +
 	"\x1eoldestMessageTimestampInWindow\x18\x02 \x01(\x03R\x1eoldestMessageTimestampInWindow\x12\"\n" +
 	"\fmessageCount\x18\x03 \x01(\x03R\fmessageCount\x120\n" +
 	"\x13nonHistoryReceivers\x18\x04 \x03(\tR\x13nonHistoryReceivers\x12F\n" +
-	"\x1eoldestMessageTimestampInBundle\x18\x05 \x01(\x03R\x1eoldestMessageTimestampInBundle\x1a\xd4\x02\n" +
+	"\x1eoldestMessageTimestampInBundle\x18\x05 \x01(\x03R\x1eoldestMessageTimestampInBundle\x12,\n" +
+	"\x11includesChatTheme\x18\x06 \x01(\bR\x11includesChatTheme\x1a\xd4\x02\n" +
 	"\x14MessageHistoryNotice\x12M\n" +
 	"\vcontextInfo\x18\x01 \x01(\v2+.WAWebProtobufsE2EGuest.Message.ContextInfoR\vcontextInfo\x12n\n" +
 	"\x16messageHistoryMetadata\x18\x02 \x01(\v26.WAWebProtobufsE2EGuest.Message.MessageHistoryMetadataR\x16messageHistoryMetadata\x12}\n" +
@@ -20508,7 +20525,7 @@ const file_waE2EGuest_WAWebProtobufsE2EGuest_proto_rawDesc = "" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x18\n" +
 	"\acaption\x18\x02 \x01(\tR\acaption\x12,\n" +
 	"\x11thumbnailImageUrl\x18\x03 \x01(\tR\x11thumbnailImageUrl\x12,\n" +
-	"\x11profilePictureUrl\x18\x04 \x01(\tR\x11profilePictureUrl\x1a\xcb\f\n" +
+	"\x11profilePictureUrl\x18\x04 \x01(\tR\x11profilePictureUrl\x1a\xf7\f\n" +
 	"\fVideoMessage\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x1a\n" +
 	"\bmimetype\x18\x02 \x01(\tR\bmimetype\x12\x1e\n" +
@@ -20547,7 +20564,8 @@ const file_waE2EGuest_WAWebProtobufsE2EGuest_proto_rawDesc = "" +
 	"\x1fmotionPhotoPresentationOffsetMs\x18\x1d \x01(\x04R\x1fmotionPhotoPresentationOffsetMs\x12 \n" +
 	"\vmetadataUrl\x18\x1e \x01(\tR\vmetadataUrl\x12f\n" +
 	"\x0fvideoSourceType\x18\x1f \x01(\x0e2<.WAWebProtobufsE2EGuest.Message.VideoMessage.VideoSourceTypeR\x0fvideoSourceType\x12(\n" +
-	"\x0fdashManifestUrl\x18! \x01(\tR\x0fdashManifestUrl\"8\n" +
+	"\x0fdashManifestUrl\x18! \x01(\tR\x0fdashManifestUrl\x12*\n" +
+	"\x10smartThumbnailTs\x18\" \x01(\x03R\x10smartThumbnailTs\"8\n" +
 	"\vAttribution\x12\b\n" +
 	"\x04NONE\x10\x00\x12\t\n" +
 	"\x05GIPHY\x10\x01\x12\t\n" +

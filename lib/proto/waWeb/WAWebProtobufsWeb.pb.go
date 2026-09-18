@@ -867,6 +867,8 @@ const (
 	WebMessageInfo_ORDER_EPHEMERAL_EXEMPTION                                WebMessageInfo_StubType = 250
 	WebMessageInfo_CAMEO_CHAT_CREATED                                       WebMessageInfo_StubType = 254
 	WebMessageInfo_CAMEO_TRANSITIONED                                       WebMessageInfo_StubType = 256
+	WebMessageInfo_BIZ_CALLBACK_DISABLED                                    WebMessageInfo_StubType = 244
+	WebMessageInfo_SENDER_SIDE_CONTACT_INFO                                 WebMessageInfo_StubType = 255
 )
 
 // Enum value maps for WebMessageInfo_StubType.
@@ -1109,6 +1111,8 @@ var (
 		250: "ORDER_EPHEMERAL_EXEMPTION",
 		254: "CAMEO_CHAT_CREATED",
 		256: "CAMEO_TRANSITIONED",
+		244: "BIZ_CALLBACK_DISABLED",
+		255: "SENDER_SIDE_CONTACT_INFO",
 	}
 	WebMessageInfo_StubType_value = map[string]int32{
 		"UNKNOWN":                                                  0,
@@ -1348,6 +1352,8 @@ var (
 		"ORDER_EPHEMERAL_EXEMPTION":                                250,
 		"CAMEO_CHAT_CREATED":                                       254,
 		"CAMEO_TRANSITIONED":                                       256,
+		"BIZ_CALLBACK_DISABLED":                                    244,
+		"SENDER_SIDE_CONTACT_INFO":                                 255,
 	}
 )
 
@@ -4503,7 +4509,7 @@ const file_waWeb_WAWebProtobufsWeb_proto_rawDesc = "" +
 	"\rFORCE_UPGRADE\x10\x01\x12\x0f\n" +
 	"\vDEVELOPMENT\x10\x02\x12\x0e\n" +
 	"\n" +
-	"PRODUCTION\x10\x03\"\xe8`\n" +
+	"PRODUCTION\x10\x03\"\xa3a\n" +
 	"\x0eWebMessageInfo\x12&\n" +
 	"\x03key\x18\x01 \x02(\v2\x14.WACommon.MessageKeyR\x03key\x124\n" +
 	"\amessage\x18\x02 \x01(\v2\x1a.WAWebProtobufsE2E.MessageR\amessage\x12*\n" +
@@ -4588,7 +4594,7 @@ const file_waWeb_WAWebProtobufsWeb_proto_rawDesc = "" +
 	"\x02FB\x10\x02\x12\a\n" +
 	"\x03BSP\x10\x01\x12\x0e\n" +
 	"\n" +
-	"BSP_AND_FB\x10\x03\"\xbf>\n" +
+	"BSP_AND_FB\x10\x03\"\xfa>\n" +
 	"\bStubType\x12\v\n" +
 	"\aUNKNOWN\x10\x00\x12\n" +
 	"\n" +
@@ -4830,7 +4836,9 @@ const file_waWeb_WAWebProtobufsWeb_proto_rawDesc = "" +
 	"\x17UGC_BOT_PROFILE_UPDATED\x10\xf9\x01\x12\x1e\n" +
 	"\x19ORDER_EPHEMERAL_EXEMPTION\x10\xfa\x01\x12\x17\n" +
 	"\x12CAMEO_CHAT_CREATED\x10\xfe\x01\x12\x17\n" +
-	"\x12CAMEO_TRANSITIONED\x10\x80\x02\"X\n" +
+	"\x12CAMEO_TRANSITIONED\x10\x80\x02\x12\x1a\n" +
+	"\x15BIZ_CALLBACK_DISABLED\x10\xf4\x01\x12\x1d\n" +
+	"\x18SENDER_SIDE_CONTACT_INFO\x10\xff\x01\"X\n" +
 	"\x06Status\x12\t\n" +
 	"\x05ERROR\x10\x00\x12\v\n" +
 	"\aPENDING\x10\x01\x12\x0e\n" +
