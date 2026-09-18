@@ -931,7 +931,8 @@ func resolveAltJID(c *dispatch.Context) types.JID {
 		return types.EmptyJID
 	}
 	chat := c.Chat.ToNonAD()
-	if chat.Server == types.HiddenUserServer {
+	switch chat.Server {
+	case types.HiddenUserServer:
 		if c.Evt != nil && !c.Evt.Info.RecipientAlt.IsEmpty() && c.Evt.Info.RecipientAlt.Server != types.HiddenUserServer {
 			return c.Evt.Info.RecipientAlt.ToNonAD()
 		}
@@ -948,7 +949,7 @@ func resolveAltJID(c *dispatch.Context) types.JID {
 				return c.Client.Store.ID.ToNonAD()
 			}
 		}
-	} else if chat.Server == types.DefaultUserServer {
+	case types.DefaultUserServer:
 		if c.Client != nil && c.Client.Store != nil && c.Client.Store.LIDs != nil {
 			if resolved, err := c.Client.Store.LIDs.GetLIDForPN(c.Ctx, chat); err == nil && !resolved.IsEmpty() {
 				return resolved.ToNonAD()
