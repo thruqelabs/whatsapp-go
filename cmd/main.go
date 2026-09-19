@@ -54,7 +54,6 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
-	// If autoupdate is enabled, check for updates and upgrade & restart before starting bot
 	if updater.GetStoredAutoUpdate() && os.Getenv("_WHATSRROK_AUTOUPDATE_RESTARTED") != "1" {
 		ctxAuto, cancelAuto := context.WithTimeout(ctx, 45*time.Second)
 		updated, err := updater.PerformAutoUpdate(ctxAuto, os.Stdout)
@@ -94,7 +93,7 @@ func main() {
 		Business:        args.Business,
 		Database:        args.Database,
 		Verbose:         args.Verbose,
-		WSPort:          0, // 0 instructs OS to bind to a random available port
+		WSPort:          0,
 		AsyncMessageAck: true,
 	})
 

@@ -33,7 +33,7 @@ type CLIArgs struct {
 
 // printCLIUsage prints clean plain-word command line usage.
 func printCLIUsage() {
-	fmt.Print(`Usage: whatsrook [options] [<phone>]
+	fmt.Print(`Usage: whatsrook [options] [<phone> | <SE_ID:...>]
        whatsrook update [check | stable | beta]
        whatsrook autoupdate [on | off]
        whatsrook logout [<phone>]
@@ -41,6 +41,7 @@ func printCLIUsage() {
 
 Arguments:
   <phone>                    Phone number used to identify the session
+  <SE_ID:...>                Encrypted session configuration token from web provisioner
 
 Commands & Options:
   auth <pair | qr>           Authentication method (default: qr)
@@ -152,6 +153,13 @@ func parseCLIArgsFrom(cmdArgs []string) CLIArgs {
 			}
 
 		default:
+			// Check if token is an encrypted web session string directly in arguments
+			if strings.HasPrefix(raw, "SE_ID:") {
+				sessionVal = raw
+				continue
+			}
+
+			// Clean phone input
 			cleanArg := strings.TrimPrefix(raw, "+")
 			if len(cleanArg) >= 7 && len(cleanArg) <= 15 && isNumeric(cleanArg) {
 				sessionVal = raw
@@ -159,11 +167,43 @@ func parseCLIArgsFrom(cmdArgs []string) CLIArgs {
 		}
 	}
 
-	// Single strict env var fallbacks (No multiple alias checks)
+	// 1. Resolve session from arguments or environment (prefer SESSION_ID, fallback to SESSION)
 	if sessionVal == "" && !isUpdate {
-		sessionVal = os.Getenv("SESSION")
+		if val := os.Getenv("SESSION_ID"); strings.TrimSpace(val) != "" {
+			sessionVal = strings.TrimSpace(val)
+		} else if val := os.Getenv("SESSION"); strings.TrimSpace(val) != "" {
+			sessionVal = strings.TrimSpace(val)
+		}
 	}
 
+	// 2. If sessionVal is an encrypted SE_ID token, decrypt and populate config defaults
+	if strings.HasPrefix(sessionVal, "SE_ID:") {
+		payload, err := DecryptSessionID(sessionVal)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: failed to decrypt session credential: %v\n", err)
+			os.Exit(1)
+		}
+
+		sessionVal = payload.Phone
+
+		if authVal == "" && payload.Auth != "" {
+			authVal = payload.Auth
+		}
+		if clientVal == "" && payload.Client != "" {
+			clientVal = payload.Client
+		}
+		if !businessVal && payload.Business {
+			businessVal = true
+		}
+		if dbVal == "" && payload.DB != "" {
+			dbVal = payload.DB
+		}
+		if !verboseVal && payload.Verbose {
+			verboseVal = true
+		}
+	}
+
+	// 3. Fallbacks for standard options
 	if authVal == "" {
 		authVal = os.Getenv("AUTH")
 	}

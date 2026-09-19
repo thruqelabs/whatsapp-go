@@ -1,0 +1,13 @@
+{
+    "name": "whatsrook",
+    "description": "WhatsApp Bot",
+    "repository": "https://github.com/thruqe/whatsapp-go",
+    "logo": "https://raw.githubusercontent.com/thruqe/whatsapp-go/master/assets/logo.png",
+    "stack": "container",
+    "env": {
+        "SESSION_ID": {
+            "description": "Encrypted Session ID (SE_ID:...)",
+            "required": true
+        }
+    }
+}
