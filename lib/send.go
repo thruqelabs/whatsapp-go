@@ -277,7 +277,7 @@ func (cli *Client) SendMessage(ctx context.Context, to types.JID, message *waE2E
 				cli.Log.Warnf("[PERF] SendMessage FAILED id=%s to=%s err=%v total=%s (queue=%s, marshal=%s, get_parts=%s, get_devs=%s, fetch_lids=%s, lock_sess=%s, prefetch=%s, prekeys=%s, dev_enc=%s, grp_enc=%s, peer_enc=%s, tc_token=%s, save_sess=%s, recent=%s, sec=%s, send=%s, resp=%s, retry=%s)",
 					msgID, to.String(), err, t.Total, t.Queue, t.Marshal, t.GetParticipants, t.GetDevices, t.FetchLIDs, t.LockSessions, t.PrefetchSessions, t.FetchPreKeys, t.DeviceEncrypt, t.GroupEncrypt, t.PeerEncrypt, t.TCToken, t.SaveSessions, t.AddRecentMessage, t.PutMessageSecret, t.Send, t.Resp, t.Retry)
 			} else {
-				cli.Log.Infof("[PERF] SendMessage id=%s to=%s total=%s (queue=%s, marshal=%s, get_parts=%s, get_devs=%s, fetch_lids=%s, lock_sess=%s, prefetch=%s, prekeys=%s, dev_enc=%s, grp_enc=%s, peer_enc=%s, tc_token=%s, save_sess=%s, recent=%s, sec=%s, send=%s, resp=%s, retry=%s)",
+				cli.Log.Debugf("[PERF] SendMessage id=%s to=%s total=%s (queue=%s, marshal=%s, get_parts=%s, get_devs=%s, fetch_lids=%s, lock_sess=%s, prefetch=%s, prekeys=%s, dev_enc=%s, grp_enc=%s, peer_enc=%s, tc_token=%s, save_sess=%s, recent=%s, sec=%s, send=%s, resp=%s, retry=%s)",
 					msgID, to.String(), t.Total, t.Queue, t.Marshal, t.GetParticipants, t.GetDevices, t.FetchLIDs, t.LockSessions, t.PrefetchSessions, t.FetchPreKeys, t.DeviceEncrypt, t.GroupEncrypt, t.PeerEncrypt, t.TCToken, t.SaveSessions, t.AddRecentMessage, t.PutMessageSecret, t.Send, t.Resp, t.Retry)
 			}
 		}
@@ -568,7 +568,7 @@ func (cli *Client) SendMessage(ctx context.Context, to types.JID, message *waE2E
 				if asyncErr != nil {
 					cli.Log.Warnf("Async server ACK error for message %s to %s: %v", reqID, to, asyncErr)
 				} else {
-					cli.Log.Infof("[PERF] Async ACK received for id=%s to=%s (ack_wait=%s)", reqID, to, time.Since(ackStart))
+					cli.Log.Debugf("[PERF] Async ACK received for id=%s to=%s (ack_wait=%s)", reqID, to, time.Since(ackStart))
 				}
 				if req.OnAck != nil {
 					req.OnAck(asyncResp, asyncErr)

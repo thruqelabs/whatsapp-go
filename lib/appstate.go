@@ -123,7 +123,7 @@ func (cli *Client) handleAppStateRecovery(
 		cli.Log.Errorf("Failed to get current app state %s version for %s: %v", name, reqID, err)
 		return true
 	} else if currentVersion >= version {
-		cli.Log.Infof("Ignoring app state recovery response for %s as current version %d is newer than or equal to recovery version %d", reqID, currentVersion, snapshot.GetVersion().GetVersion())
+		cli.Log.Debugf("Ignoring app state recovery response for %s as current version %d is newer than or equal to recovery version %d", reqID, currentVersion, snapshot.GetVersion().GetVersion())
 		return true
 	}
 	cli.Log.Debugf("Handling app state recovery response for %s", reqID)
@@ -589,7 +589,7 @@ func (cli *Client) requestAppStateKeys(ctx context.Context, rawKeyIDs [][]byte) 
 	if len(debugKeyIDs) == 0 {
 		return nil
 	}
-	cli.Log.Infof("Sending key request for app state keys %+v", debugKeyIDs)
+	cli.Log.Debugf("Sending key request for app state keys %+v", debugKeyIDs)
 	_, err := cli.SendPeerMessage(ctx, msg)
 	if err != nil {
 		cli.Log.Warnf("Failed to send app state key request: %v", err)

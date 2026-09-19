@@ -25,11 +25,11 @@ func (cli *Client) handleStreamError(ctx context.Context, node *waBinary.Node) {
 	switch {
 	case code == "515":
 		if cli.DisableLoginAutoReconnect {
-			cli.Log.Infof("Got 515 code, but login autoreconnect is disabled, not reconnecting")
+			cli.Log.Debugf("Got 515 code, but login autoreconnect is disabled, not reconnecting")
 			cli.dispatchEvent(&events.ManualLoginReconnect{})
 			return
 		}
-		cli.Log.Infof("Got 515 code, reconnecting...")
+		cli.Log.Debugf("Got 515 code, reconnecting...")
 		go func() {
 			cli.Disconnect()
 			err := cli.connect(ctx)
@@ -39,7 +39,7 @@ func (cli *Client) handleStreamError(ctx context.Context, node *waBinary.Node) {
 		}()
 	case code == "401" && conflictType == "device_removed":
 		cli.expectDisconnect()
-		cli.Log.Infof("Got device removed stream error, sending LoggedOut event and deleting session")
+		cli.Log.Debugf("Got device removed stream error, sending LoggedOut event and deleting session")
 		go cli.dispatchEvent(&events.LoggedOut{OnConnect: false, Reason: events.ConnectFailureLoggedOut})
 		err := cli.Store.Delete(ctx)
 		if err != nil {
@@ -47,14 +47,14 @@ func (cli *Client) handleStreamError(ctx context.Context, node *waBinary.Node) {
 		}
 	case conflictType == "replaced":
 		cli.expectDisconnect()
-		cli.Log.Infof("Got replaced stream error, sending StreamReplaced event")
+		cli.Log.Debugf("Got replaced stream error, sending StreamReplaced event")
 		go cli.dispatchEvent(&events.StreamReplaced{})
 	case code == "503":
 		// This seems to happen when the server wants to restart or something.
 		// The disconnection will be emitted as an events.Disconnected and then the auto-reconnect will do its thing.
 		cli.Log.Warnf("Got 503 stream error, assuming automatic reconnect will handle it")
 	case cli.RefreshCAT != nil && (code == events.ConnectFailureCATInvalid.NumberString() || code == events.ConnectFailureCATExpired.NumberString()):
-		cli.Log.Infof("Got %s stream error, refreshing CAT before reconnecting...", code)
+		cli.Log.Debugf("Got %s stream error, refreshing CAT before reconnecting...", code)
 		cli.socketLock.RLock()
 		defer cli.socketLock.RUnlock()
 		err := cli.RefreshCAT(ctx)
@@ -124,7 +124,7 @@ func (cli *Client) handleConnectFailure(ctx context.Context, node *waBinary.Node
 		)
 	}
 	if reason.IsLoggedOut() {
-		cli.Log.Infof("Got %s connect failure, sending LoggedOut event and deleting session", reason)
+		cli.Log.Debugf("Got %s connect failure, sending LoggedOut event and deleting session", reason)
 		go cli.dispatchEvent(&events.LoggedOut{OnConnect: true, Reason: reason})
 		err := cli.Store.Delete(ctx)
 		if err != nil {
@@ -140,7 +140,7 @@ func (cli *Client) handleConnectFailure(ctx context.Context, node *waBinary.Node
 		cli.Log.Errorf("Client outdated (405) connect failure (client version: %s)", store.GetWAVersion().String())
 		go cli.dispatchEvent(&events.ClientOutdated{})
 	} else if reason == events.ConnectFailureCATInvalid || reason == events.ConnectFailureCATExpired {
-		cli.Log.Infof("Got %d/%s connect failure, refreshing CAT before reconnecting...", int(reason), message)
+		cli.Log.Debugf("Got %d/%s connect failure, refreshing CAT before reconnecting...", int(reason), message)
 		err := cli.RefreshCAT(ctx)
 		if err != nil {
 			cli.Log.Errorf("Failed to refresh CAT: %v", err)
@@ -160,7 +160,7 @@ func (cli *Client) handleConnectSuccess(ctx context.Context, node *waBinary.Node
 		cli.Log.Warnf("Received connect success without pairing, ignoring")
 		return
 	}
-	cli.Log.Infof("Successfully authenticated")
+	cli.Log.Debugf("Successfully authenticated")
 	cli.LastSuccessfulConnect = time.Now()
 	cli.AutoReconnectErrors = 0
 	cli.isLoggedIn.Store(true)
@@ -179,7 +179,7 @@ func (cli *Client) handleConnectSuccess(ctx context.Context, node *waBinary.Node
 		if err != nil {
 			cli.Log.Warnf("Failed to save device after updating LID: %v", err)
 		} else {
-			cli.Log.Infof("Updated LID to %s", cli.Store.LID)
+			cli.Log.Debugf("Updated LID to %s", cli.Store.LID)
 		}
 		cli.StoreLIDPNMapping(ctx, cli.Store.GetLID(), cli.Store.GetJID())
 	}
