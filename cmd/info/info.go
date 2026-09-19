@@ -403,7 +403,7 @@ func replyWithAliveAudioCard(ctx *dispatch.Context, data []byte, bodyText, owner
 	botName := ctx.GetBotName()
 	title := dispatch.Sprintf("%s IS ALIVE", strings.ToUpper(botName))
 	body := "Owner: " + ownerName
-	sourceURL := "https://github.com/ThruqeLabs/whatsrook"
+	sourceURL := "https://github.com/thruqelabs/whatsapp-go"
 
 	adInfo := &waE2E.ContextInfo_ExternalAdReplyInfo{
 		Title:                 new(title),
@@ -797,7 +797,7 @@ func handlePing(ctx *dispatch.Context) error {
 }
 
 func handleRepo(ctx *dispatch.Context) error {
-	repoURL := "https://github.com/ThruqeLabs/whatsrook"
+	repoURL := "https://github.com/thruqelabs/whatsapp-go"
 	return ctx.Text().
 		Header("WhatsRook Repository").
 		Line(repoURL).

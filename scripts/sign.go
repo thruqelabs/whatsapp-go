@@ -126,7 +126,7 @@ func runSign(args []string) error {
 			"-key", keyPath,
 			"-h", "sha256",
 			"-n", "WhatsRook",
-			"-i", "https://github.com/ThruqeLabs/whatsrook",
+			"-i", "https://github.com/thruqelabs/whatsapp-go",
 			"-in", targetBinary,
 			"-out", signedOutput,
 		)
@@ -142,7 +142,7 @@ func runSign(args []string) error {
 			"/a",
 			"/fd", "sha256",
 			"/d", "WhatsRook",
-			"/du", "https://github.com/ThruqeLabs/whatsrook",
+			"/du", "https://github.com/thruqelabs/whatsapp-go",
 			targetBinary,
 		)
 		signCmd.Stdout = os.Stdout
